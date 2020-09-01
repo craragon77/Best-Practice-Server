@@ -6,7 +6,7 @@ const knex = require('knex');
 
 userRouter
     .route('/')
-    .get((req, res) => {
+    .get((req, res, next) => {
         const knexInstance = req.app.get('db')
         UserService.getAllUsers(knexInstance)
             .then(users => {

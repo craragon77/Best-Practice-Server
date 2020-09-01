@@ -8,7 +8,7 @@ const knex = require('knex');
 const userRouter = require('./Routers/UserRouter');
 const songsRouter = require('./Routers/SongsRouter');
 const userSongsRouter = require('./Routers/UserSongsRouter');
-const practiceHistroyRouter = require('./Routers/PracticeHistory');
+const practiceHistroyRouter = require('./Routers/PracticeHistoryRouter');
 
 const app = express()
 
@@ -24,9 +24,12 @@ const knexInstance = knex({
     connection: process.env.DATABASE_URL
 });
 
+
 app.get('/', (req,res) => {
     res.send('Hello, Dave')
 })
+
+app.set('db', knexInstance)
 
 app.use('/api/users', userRouter);
 app.use('/api/songs', songsRouter);
