@@ -35,7 +35,7 @@ userRouter
             UserService.postNewUser(knexInstance, newUser)
                 .then(user => {
                     console.log(user)
-                    res.sendStatus(201).json(user)
+                    res.status(201).json(user)
                     //trouble spot here ^^^^
                 })
                 .catch(next);
