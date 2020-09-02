@@ -1,6 +1,7 @@
 const express = require('express');
 const userSongsRouter = express.Router();
 const UserSongsServices = require('../Services/UserSongsServices');
+const jsonParser = express.json();
 //reminder: this one where users can log the songs they are working on!
 userSongsRouter
     .route('/')

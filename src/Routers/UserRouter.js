@@ -3,6 +3,7 @@ const userRouter = express.Router();
 const bodyParser = express.json();
 const UserService = require('../Services/UserService');
 const knex = require('knex');
+const jsonParser = express.json();
 
 userRouter
     .route('/')
@@ -15,6 +16,11 @@ userRouter
                 res.json(users)
             })
             .catch(next)
+    })
+    .post(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const {username, password} = req.body;
+        const newUser = {username, password};
     })
 
 module.exports = userRouter;
