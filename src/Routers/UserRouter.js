@@ -34,9 +34,7 @@ userRouter
         else{
             UserService.postNewUser(knexInstance, newUser)
                 .then(user => {
-                    console.log(user)
                     res.status(201).json(user)
-                    //trouble spot here ^^^^
                 })
                 .catch(next);
         }
