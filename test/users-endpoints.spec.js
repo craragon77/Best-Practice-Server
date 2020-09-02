@@ -44,6 +44,41 @@ describe('User Endpoints', function(){
         return supertest(app)
         .get('/api/users')
         .expect(200)
+        });
     });
-    });
+    describe.only('POST /users endpoint', () => {
+        it(`doesn't post if a user doesn't include a username`, () => {
+            const noUsername = {
+                password: 'password'
+            }
+            return supertest(app)
+            .post('/api/users')
+            .send(noUsername)
+            .expect(400)
+
+        });
+        it(`doesn't post if a user doesn't include a password`, () => {
+            const noPassword = {
+                username: 'username'
+            }
+            return supertest(app)
+            .post('/api/users')
+            .send(noPassword)
+            .expect(400)
+        });
+        it(`posts successfully when a user includes both a valid name and password`, () => {
+            const newValidUser = {
+                username: 'username',
+                password: 'password'
+            };
+            return supertest(app)
+            .post('/api/users')
+            .send(newValidUser)
+            .expect(res => {
+                expect(res.body.username).to.eql(newValidUser.username);
+                expect(res.body.password).to.eql(newValidUser.password);
+                expect(res.body).to.have.property('id');
+            })
+        })
+    })
 });

@@ -14,7 +14,7 @@ describe('Practice History Endpoint', function(){
             app.set('db', db);
         });
         after('disconnect from db', () => db.destroy());
-        before('clean the table', () => db('pratice_history'));
+        before('clean the table', () => db('pratice_history').truncate());
 
         context('Given users have logged hours into the database', () => {
             const testPracticeHistory = [

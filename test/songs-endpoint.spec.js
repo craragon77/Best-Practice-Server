@@ -15,7 +15,7 @@ describe('Songs Endpoint', function(){
         });
         after('disconnect from db', () => db.destroy());
         //computer gets mad when I have a table here
-        //before('clean the table', () => db('users').truncate());
+        before('clean the table', () => db('songs').truncate());
 
 
         context('Given there are users in the database', () => {
@@ -40,11 +40,12 @@ describe('Songs Endpoint', function(){
                 return db.into('songs').insert(testSongs)
             });
         });
+    });
+    describe('GET /songs', () => {
         it('GET /songs responds with 200 and all of the songs', () => {
             return supertest(app)
             .get('/api/songs')
             .expect(200)
-        })
-
-    })
-})
+        });
+    });
+});
