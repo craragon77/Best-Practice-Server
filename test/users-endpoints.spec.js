@@ -75,9 +75,9 @@ describe('User Endpoints', function(){
             .post('/api/users')
             .send(newValidUser)
             .expect(res => {
-                expect(res.body.username).to.eql(newValidUser.username);
-                expect(res.body.password).to.eql(newValidUser.password);
-                expect(res.body).to.have.property('id');
+                expect(res.username).to.eql(newValidUser.username);
+                expect(password).to.eql(newValidUser.password);
+                expect(res).to.have.property('id');
             })
         })
     })
