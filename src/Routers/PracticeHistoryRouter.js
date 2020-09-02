@@ -32,7 +32,6 @@ practiceHistoryRouter
                 })
                 .catch(next);
         }
-        
     })
 
 module.exports = practiceHistoryRouter
