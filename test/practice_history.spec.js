@@ -49,4 +49,26 @@ describe('Practice History Endpoint', function(){
             .expect(200);
         });
     });
+    describe('POST /practice-history', () => {
+        it(`responds with 400 if a song isnt in the req body`, () => {
+            let noSong = {
+                start_time: '01-01-1970',
+                end_time: '01-01-1970'
+            };
+            return supertest(app)
+            .post('/api/practice-history')
+            .send(noSong)
+            .expect(400);
+        });
+        it(`responds with 400 if no start_date in the req body`, () => {
+            let noStart = {
+                song_practiced: 1,
+                end_time: '01-01-1970'
+            };
+            return supertest(app)
+            .post('/api/practice-history')
+            .send(noStart)
+            .expect(400);
+        })
+    })
 });

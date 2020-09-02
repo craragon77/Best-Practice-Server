@@ -46,7 +46,7 @@ describe('User Endpoints', function(){
         .expect(200)
         });
     });
-    describe.only('POST /users endpoint', () => {
+    describe('POST /users endpoint', () => {
         it(`doesn't post if a user doesn't include a username`, () => {
             const noUsername = {
                 password: 'password'
