@@ -51,4 +51,88 @@ describe('User-Songs endpoint!', function(){
             .expect(200)
         });
     });
+    describe.only('POST /user-songs', () => {
+        it(`sends a 400 and an error if there is no user_id`, () => {
+            const noUserId = {
+                song_id: 1,
+                difficulty: 'hard',
+                instrument: 'guitar',
+                desired_hours: 1
+            };
+            return supertest(app)
+            .post('/api/user-songs')
+            .send(noUserId)
+            .expect(400);
+        });
+        it(`sends a 400 and an error if there is no user_id`, () => {
+            const noSongId = {
+                user_id: 1,
+                difficulty: 'hard',
+                instrument: 'guitar',
+                desired_hours: 1
+            };
+            return supertest(app)
+            .post('/api/user-songs')
+            .send(noSongId)
+            .expect(400);
+        });
+        it(`sends a 400 and an error if there is no user_id`, () => {
+            const noDifficulty = {
+                song_id: 1,
+                user_id: 1,
+                instrument: 'guitar',
+                desired_hours: 1
+            };
+            return supertest(app)
+            .post('/api/user-songs')
+            .send(noDifficulty)
+            .expect(400);
+        });
+        it(`sends a 400 and an error if there is no user_id`, () => {
+            const noInstrument = {
+                song_id: 1,
+                user_id: 1,
+                difficulty: 'hard',
+                desired_hours: 1
+            };
+            return supertest(app)
+            .post('/api/user-songs')
+            .send(noInstrument)
+            .expect(400);
+        });
+        it(`sends a 400 and an error if there is no user_id`, () => {
+            const noHours = {
+                song_id: 1,
+                user_id: 1,
+                difficulty: 'hard',
+                instrument: 'guitar',
+            };
+            return supertest(app)
+            .post('/api/user-songs')
+            .send(noHours)
+            .expect(400);
+        });
+        it('posts a valid user piece if all the requirements are met', () => {
+            const validUserSong = {
+                song_id: 1,
+                user_id: 1,
+                difficulty: 'hard',
+                instrument: 'guitar',
+                desired_hours: 1,
+                comments: 'comment'
+            };
+            return supertest(app)
+            .post('/api/user-songs')
+            .send(validUserSong)
+            .expect(res => {
+                expect(res.body.song_id).to.eql(validUserSong.song_id);
+                expect(res.body.user_id).to.eql(validUserSong.user_id);
+                expect(res.body.difficulty).to.eql(validUserSong.difficulty);
+                expect(res.body.instrument).to.eql(validUserSong.instrument);
+                expect(res.body.desired_hours).to.eql(validUserSong.desired_hours);
+                expect(res.body.comments).to.eql(validUserSong.comments);
+                expect(res.body).to.have.property('id');
+            })
+        })
+    })
 })
