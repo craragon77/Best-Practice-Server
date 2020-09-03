@@ -70,5 +70,21 @@ describe('Practice History Endpoint', function(){
             .send(noStart)
             .expect(400);
         })
+        it(`posts successfully should all the parameters be there`, () => {
+            let validPost = {
+                song_practiced: 1,
+                start_time: '01-01-1970',
+                end_time: '01-01-1970'
+            }
+            return supertest(app)
+            .post('/api/practice-history')
+            .send(validPost)
+            .expect(res => {
+                expect(res.body.song_practiced).to.eql(validPost.song_practiced);
+                expect(Date(res.body.start_time)).to.eql(Date(validPost.start_time));
+                expect(Date(res.body.end_time)).to.eql(Date(validPost.end_time));
+                expect(res.body).to.have.property('id')
+            })
+        })
     })
 });
