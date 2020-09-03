@@ -10,6 +10,9 @@ const PracticeHistory = {
         .then(rows => {
             return rows[0]
         })
+    },
+    getPracticeHistoryFromId(knex, id){
+        return knex.select().from('practice_history').where('id', id).first()
     }
 }
 

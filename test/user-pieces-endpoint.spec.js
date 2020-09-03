@@ -14,7 +14,8 @@ describe('User-Songs endpoint!', function(){
             app.set('db', db);
         });
         after('disconnect from db', () => db.destroy());
-        before('clean the table', () => db('users').truncate());
+        before('clean the table', () => db('user_songs').truncate());
+        before('truncate the songs table apparently', () => db('songs').truncate())
 
         context('Given that users have logged pieces in the database', () => {
             const testUserPieces = [
@@ -112,10 +113,10 @@ describe('User-Songs endpoint!', function(){
             .send(noHours)
             .expect(400);
         });
-        it('posts a valid user piece if all the requirements are met', () => {
+        it.only('posts a valid user piece if all the requirements are met', () => {
             const validUserSong = {
                 //doesn't work when the id is 1 but DOES work when the id is 13?
-                song_id: 13,
+                song_id: 1,
                 user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',

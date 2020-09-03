@@ -33,5 +33,20 @@ practiceHistoryRouter
                 .catch(next);
         }
     })
+practiceHistoryRouter
+    .route('/:id')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        let p_h_id = req.params.id;
+        PracticeHistoryServices.getPracticeHistoryFromId(knexInstance, p_h_id)
+            .then(history => {
+                if(!history){
+                    res.status(404).json({error:{ message: 'practice sesson not found'}})
+                }
+                else{
+                    res.status(201).json(history)
+                }
+            })
+    })
 
 module.exports = practiceHistoryRouter

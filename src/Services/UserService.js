@@ -9,7 +9,10 @@ const UserService = {
         .returning('*')
         .then(rows => {
             return rows[0]
-        })
+        });
+    },
+    getUserById(knex, id){
+        return knex.select().from('users').where('id', id).first();
     }
 }
 

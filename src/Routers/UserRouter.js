@@ -38,8 +38,24 @@ userRouter
                 })
                 .catch(next);
         }
-        
+    })
 
+userRouter
+    .route('/:id')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        let userId = req.params.id
+        UserService.getUserById(knexInstance, userId)
+            .then(user => {
+                if (!user){
+                    res.status(404).json({
+                        error: {message: `User can't be found`}
+                    })
+                } else {
+                    res.status(201).json(user)
+                }
+            })
+            .catch(next)
     })
 
 module.exports = userRouter;
