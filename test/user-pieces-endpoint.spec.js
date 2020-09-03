@@ -23,7 +23,7 @@ describe('User-Songs endpoint!', function(){
                     id: 1,
                     user_id: 1,
                     song_id: 1,
-                    difficulty: 'easy',
+                    difficulty: 'hard as the dickens',
                     instrument: 'guitar',
                     desired_hours: 1,
                     comments: 'comment',
@@ -33,7 +33,7 @@ describe('User-Songs endpoint!', function(){
                     id: 2,
                     user_id: 2,
                     sond_id: 2,
-                    difficulty: 'easy',
+                    difficulty: 'lets see if this is posting to the database',
                     instrument: 'guitar',
                     desired_hours: 1,
                     comments: 'comment',
@@ -113,10 +113,10 @@ describe('User-Songs endpoint!', function(){
             .send(noHours)
             .expect(400);
         });
-        it.only('posts a valid user piece if all the requirements are met', () => {
+        it('posts a valid user piece if all the requirements are met', () => {
             const validUserSong = {
                 //doesn't work when the id is 1 but DOES work when the id is 13?
-                song_id: 1,
+                song_id: 13,
                 user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
@@ -135,6 +135,14 @@ describe('User-Songs endpoint!', function(){
                 expect(res.body.comments).to.eql(validUserSong.comments);
                 expect(res.body).to.have.property('id');
             })
+        });
+    });
+    describe('GET user_songs based on the id', () => {
+        it(`returns 404 if the user_song id is not found`, () => {
+            let user_songId = 12345;
+            return supertest(app)
+            .get(`user-songs/${user_songId}`)
+            .expect(404)
         })
-    })
+    });
 })

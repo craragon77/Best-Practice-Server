@@ -12,7 +12,7 @@ userRouter
         UserService.getAllUsers(knexInstance)
         //and there is an issue here for some reason :(
             .then(users => {
-                console.log(users)
+                console.log(Date('2020-09-03T16:32:40.864Z'))
                 res.json(users)
             })
             .catch(next)
@@ -49,10 +49,10 @@ userRouter
             .then(user => {
                 if (!user){
                     res.status(404).json({
-                        error: {message: `User can't be found`}
+                        error: {message: `user not found`}
                     })
                 } else {
-                    res.status(201).json(user)
+                    res.status(201).json(user);
                 }
             })
             .catch(next)

@@ -38,5 +38,23 @@ userSongsRouter
                 })
         }
     })
+userSongsRouter
+    .route('/:id')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        let userSongId = req.params.id;
+        UserSongsServices.getUserSongById(knexInstance, userSongId)
+            .then(user_song => {
+                if(!user_song){
+                    res.status(404).json({
+                        error: {message: 'user_song not found'}
+                    })
+                } else {
+                    res.status(201).json(user_song)
+                }
+            })
+            .catch(next);
+    })
+
 
 module.exports = userSongsRouter

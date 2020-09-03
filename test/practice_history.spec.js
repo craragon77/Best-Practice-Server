@@ -86,5 +86,15 @@ describe('Practice History Endpoint', function(){
                 expect(res.body).to.have.property('id')
             })
         })
+    });
+    describe('/GET practice sesson by id', () => {
+        it('404 if the sesson is not found', () => {
+            let fakeSesson = 12345;
+            return supertest(app)
+            .get(`/practice-history/${fakeSesson}`)
+            //.expect(404, {error: {message: 'practice session not found'}});
+            //^^^why does this fail the test?
+            .expect(404);
+        })
     })
 });

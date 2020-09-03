@@ -85,10 +85,10 @@ describe('User Endpoints', function(){
         it(`returns a 404 if the user's id cannot be found`, () => {
             let missingId = 12345
             return supertest(app)
-            .get(`/articles/${missingId}`)
+            .get(`/users/${missingId}`)
             //why is it that the message isn't sent as part of the code?
-            //expect(404, {error: {message: 'User can't be found'}})
-            .expect(404)
-        })
+            //.expect(404, {error: {message: `user not found`}})
+            .expect(404);
+        });
     });
 });
