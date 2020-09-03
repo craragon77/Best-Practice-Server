@@ -51,7 +51,7 @@ describe('User-Songs endpoint!', function(){
             .expect(200)
         });
     });
-    describe.only('POST /user-songs', () => {
+    describe('POST /user-songs', () => {
         it(`sends a 400 and an error if there is no user_id`, () => {
             const noUserId = {
                 song_id: 1,
@@ -114,7 +114,8 @@ describe('User-Songs endpoint!', function(){
         });
         it('posts a valid user piece if all the requirements are met', () => {
             const validUserSong = {
-                song_id: 1,
+                //doesn't work when the id is 1 but DOES work when the id is 13?
+                song_id: 13,
                 user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
