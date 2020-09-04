@@ -73,5 +73,24 @@ userRouter
             })
             .catch(next);
     })
+    .patch(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const {username, password} = req.body;
+        const userToUpdate = {username, password};
+        const userId = req.params.id;
+        if(!username || !password || username === null || password === null){
+            res.status(400).json('please include a valid username and password')
+        } else{
+            UserService.updateUsers(knexInstance, userId, userToUpdate)
+            .then(user => {
+                if(!user){
+                    res.status(404).json({error: {message: 'unable to update: user not found'}});
+                } 
+                else{
+                    res.json('user successfully updated').status(204);
+                }
+            })
+        }
+    })
 
 module.exports = userRouter;
