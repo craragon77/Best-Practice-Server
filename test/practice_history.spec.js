@@ -6,11 +6,11 @@ const config = require('../src/config');
 describe.only('Practice History Endpoint', function(){
     describe('Setting up the tests', function(){
         let db
-        console.log(TEST_DATABASE_URL)
+        console.log(config.TEST_DATABASE_URL)
         before('make knex instance', () => {
             db = knex ({
                 client: 'pg',
-                connection: config.TEST_DATABASE_URL
+                connection: config.TEST_DATABASE_URL || "postgresql://CRA@localhost/Best-Practice-DB-Test"
             });
             app.set('db', db);
         });
