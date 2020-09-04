@@ -44,7 +44,7 @@ userRouter
     .route('/:id')
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
-        let userId = req.params.id
+        let userId = req.params.id;
         UserService.getUserById(knexInstance, userId)
             .then(user => {
                 if (!user){
@@ -56,6 +56,22 @@ userRouter
                 }
             })
             .catch(next)
+    })
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        let userId = req.params.id;
+        UserService.deleteUsers(knexInstance, userId)
+            .then(user => {
+                if(!user){
+                    res.status(404).json({
+                        error: {message: `Unable to delete user; user not found`}
+                    })
+                } else {
+                    //look into why the message doesn't send if the 
+                    res.json('User successfully deleted').status(204).end()
+                };
+            })
+            .catch(next);
     })
 
 module.exports = userRouter;

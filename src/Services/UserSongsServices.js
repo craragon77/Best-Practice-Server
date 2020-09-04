@@ -13,6 +13,16 @@ const UserSongs = {
     },
     getUserSongById(knex, id){
         return knex.select().from('user_songs').where('id', id).first();
+    },
+    deleteUserSongs(knex, id){
+        return knex('user_songs')
+        .where({id})
+        .delete();
+    },
+    updateUserSongs(knex, id, newUserSongFields){
+        return knex('user_songs')
+        .where({id})
+        .update(newUserSongFields);
     }
 }
 

@@ -13,6 +13,16 @@ const UserService = {
     },
     getUserById(knex, id){
         return knex.select().from('users').where('id', id).first();
+    },
+    deleteUsers(knex, id){
+        return knex('users')
+        .where({id})
+        .delete();
+    },
+    updateUsers(knex, id, newUserFields){
+        return knex('users')
+        .where({id})
+        .update(newUserFields);
     }
 }
 

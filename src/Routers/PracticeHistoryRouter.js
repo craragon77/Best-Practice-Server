@@ -41,12 +41,25 @@ practiceHistoryRouter
         PracticeHistoryServices.getPracticeHistoryFromId(knexInstance, p_h_id)
             .then(history => {
                 if(!history){
-                    res.status(404).json({error:{ message: 'practice sesson not found'}})
+                    res.status(404).json({error:{ message: 'practice sesson not found'}});
                 }
                 else{
-                    res.status(201).json(history)
+                    res.status(201).json(history);
                 }
             })
+    })
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        let p_h_id = req.params.id;
+        PracticeHistoryServices.deletePracticeHistory(knexInstance, p_h_id)
+            .then(history => {
+                if(!history){
+                    res.status(404).json({error:{message: 'practice history not found'}});
+                } else{
+                    res.json('practice history successfully!').status(204).end();
+                }
+            })
+            .catch(next);
     })
 
 module.exports = practiceHistoryRouter

@@ -55,6 +55,19 @@ userSongsRouter
             })
             .catch(next);
     })
+    .delete((req, res, next) =>{
+        const knexInstance = req.app.get('db');
+        let userSongId = req.params.id;
+        UserSongsServices.deleteUserSongs(knexInstance, userSongId)
+            .then(user_song => {
+                if(!user_song){
+                    res.status(404).json('Unable to delete user_song; user_song not found');
+                } else {
+                    res.json('user_song successfully deleted').status(204).end();
+                };
+            })
+            .catch(next);
+    })
 
 
 module.exports = userSongsRouter
