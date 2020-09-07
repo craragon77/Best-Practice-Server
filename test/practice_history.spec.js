@@ -3,20 +3,20 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 
-describe.only('Practice History Endpoint', function(){
+describe('Practice History Endpoint', function(){
     describe('Setting up the tests', function(){
         let db
-        console.log(config.TEST_DATABASE_URL)
         before('make knex instance', () => {
             db = knex ({
                 client: 'pg',
-                connection: config.TEST_DATABASE_URL || "postgresql://CRA@localhost/Best-Practice-DB-Test"
+                connection: config.TEST_DATABASE_URL
             });
             app.set('db', db);
         });
-        after('disconnect from db', () => db.destroy());
-        before('clean the table', () => db('pratice_history').truncate());
 
+        //after('disconnect from db', () => db.destroy());
+        //before('clean the table', () => db('pratice_history').truncate());
+        console.log(config.TEST_DATABASE_URL)
         context('Given users have logged hours into the database', () => {
             const testPracticeHistory = [
                 {

@@ -1,7 +1,7 @@
-require('dotenv').config();
+const config = require('./src/config');
 
 module.exports = {
   "migrationsDirectory": "migrations",
   "driver": "pg",
-  "connectionString": (process.env.DATABASE_URL === 'test') ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
+  "connectionString": (config.DATABASE_URL === 'test') ? config.TEST_DATABASE_URL : config.DATABASE_URL,
 }
