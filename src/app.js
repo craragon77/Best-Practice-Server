@@ -9,6 +9,7 @@ const userRouter = require('./Routers/UserRouter');
 const songsRouter = require('./Routers/SongsRouter');
 const userSongsRouter = require('./Routers/UserSongsRouter');
 const practiceHistroyRouter = require('./Routers/PracticeHistoryRouter');
+const config = require('./config');
 
 const app = express()
 
@@ -19,17 +20,17 @@ app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
 
-const knexInstance = knex({
+/*const knexInstance = knex({
     client: 'pg',
-    connection: process.env.DATABASE_URL
-});
+    connection: config.DATABASE_URL
+}); */
 
 
 app.get('/', (req,res) => {
     res.send('Hello, Dave')
 })
 
-app.set('db', knexInstance)
+//app.set('db', knexInstance)
 
 app.use('/api/users', userRouter);
 app.use('/api/songs', songsRouter);

@@ -1,6 +1,7 @@
 const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
+const config = require('../src/config');
 
 describe('User Endpoints', function(){
     describe('Setting up tests', function(){
@@ -9,7 +10,7 @@ describe('User Endpoints', function(){
         before('make knex instance', () => {
             db = knex({
                 client: 'pg',
-                connection: process.env.TEST_DATABASE_URL
+                connection: config.TEST_DATABASE_URL
             });
             app.set('db', db);
         });
