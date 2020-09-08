@@ -64,4 +64,25 @@ songsRouter
             })
             .catch(next);
     })
+    .patch(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const songId = req.params.id;
+        const {composer, title} = req.body;
+        const songToUpdate = {title, composer};
+        if(!title || title === ''){
+            res.status(400).json('please include a valid title');
+        } else if (!composer || composer === ''){
+            res.status(400).json('please inlcude a valid composer or artist');
+        } else {
+            SongsService.updateSongs(knexInstance, songId, songToUpdate)
+                .then(song => {
+                    if(!song){
+                        res.status(404).json('song cannot be found');
+                    } else {
+                        res.json('song updated successfully').status(204);
+                    }
+                })
+                .catch(next)
+        }
+    })
 module.exports = songsRouter;

@@ -19,7 +19,7 @@ const SongsService = {
         .where({id})
         .delete();
     },
-    updateSnogs(knex, id, newSongFields){
+    updateSongs(knex, id, newSongFields){
         return knex('songs')
         .where({id})
         .update(newSongFields);
