@@ -15,7 +15,7 @@ describe.only('Practice History Endpoint', function(){
         });
         after('disconnect from db', () => db.destroy());
         //error comes from here
-        before('clean the table', () => db('pratice_history').truncate());
+        before('clean the table', () => db('practice_history').truncate());
         //^^^^^^^^^
         console.log(config.TEST_DATABASE_URL)
         context('Given users have logged hours into the database', () => {
@@ -44,7 +44,7 @@ describe.only('Practice History Endpoint', function(){
             });
         });
     describe('GET /practice-history', () => {
-        it('GET /practice-history responds with 200 and all history that has been logged', () => {
+        it.only('GET /practice-history responds with 200 and all history that has been logged', () => {
             return supertest(app)
             .get('/api/practice-history')
             .expect(200);
