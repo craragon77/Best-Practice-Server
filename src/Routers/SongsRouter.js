@@ -22,8 +22,46 @@ songsRouter
     if(!title || title == ''){
         res.status(400).json('all new songs must include the title of the piece')
     } else {
-        res.send('oh snap')
-    }
+        SongsService.postNewSong(knexInstance, newSong)
+            .then(song => {
+                res.status(201).json(song);
+            })
+            .catch(next);
+    };
 })
 
+songsRouter
+    .route('/:id')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const songId = req.params.id;
+        SongsService.getSongById(knexInstance, songId)
+            .then(song => {
+                if(!song){
+                    res.status(404).json({
+                        error: {message: `song not found`}
+                    });
+                }
+                else{
+                    res.status(201).json(song)
+                }
+            })
+            .catch(next)
+    })
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const songId = req.params.id;
+        SongsService.deleteSongs(knexInstance, songId)
+            .then(song => {
+                if(!song){
+                    res.status(404).json({
+                        error: {message: 'song not found'}
+                    });
+                }
+                else {
+                    res.json('song successfully deleted!').status(204)
+                }
+            })
+            .catch(next);
+    })
 module.exports = songsRouter;

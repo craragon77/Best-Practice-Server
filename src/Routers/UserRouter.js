@@ -90,6 +90,7 @@ userRouter
                     res.json('user successfully updated').status(204);
                 }
             })
+            .catch(next)
         }
     })
 
