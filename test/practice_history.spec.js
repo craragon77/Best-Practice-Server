@@ -3,8 +3,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 
-describe('Practice History Endpoint', function(){
-    describe('Setting up the tests', function(){
+describe.only('Practice History Endpoint', function(){
         let db
         before('make knex instance', () => {
             db = knex ({
@@ -12,10 +11,12 @@ describe('Practice History Endpoint', function(){
                 connection: config.TEST_DATABASE_URL
             });
             app.set('db', db);
+            //console.log('db', db)
         });
-
-        //after('disconnect from db', () => db.destroy());
-        //before('clean the table', () => db('pratice_history').truncate());
+        after('disconnect from db', () => db.destroy());
+        //error comes from here
+        before('clean the table', () => db('pratice_history').truncate());
+        //^^^^^^^^^
         console.log(config.TEST_DATABASE_URL)
         context('Given users have logged hours into the database', () => {
             const testPracticeHistory = [
@@ -42,7 +43,6 @@ describe('Practice History Endpoint', function(){
                 return db.into('practice_history').insert(testPracticeHistory)
             });
         });
-    });
     describe('GET /practice-history', () => {
         it('GET /practice-history responds with 200 and all history that has been logged', () => {
             return supertest(app)
