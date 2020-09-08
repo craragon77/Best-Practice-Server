@@ -4,9 +4,7 @@ const app = require('../src/app');
 const config = require('../src/config');
 
 describe('User-Songs endpoint!', function(){
-    describe('Setting up the tests', function(){
         let db
-
         before('make knex instance', () => {
             db = knex({
                 client: 'pg',
@@ -16,7 +14,7 @@ describe('User-Songs endpoint!', function(){
         });
         after('disconnect from db', () => db.destroy());
         before('clean the table', () => db('user_songs').truncate());
-        before('truncate the songs table apparently', () => db('songs').truncate())
+        //before('truncate the songs table apparently', () => db('songs').truncate())
 
         context('Given that users have logged pieces in the database', () => {
             const testUserPieces = [
@@ -45,7 +43,6 @@ describe('User-Songs endpoint!', function(){
                 return db.into('user_songs').insert(testUserPieces)
             });
         });
-    });
     describe('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
             return supertest(app)

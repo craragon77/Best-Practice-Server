@@ -3,7 +3,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 
-describe.only('Practice History Endpoint', function(){
+describe('Practice History Endpoint', function(){
         let db
         before('make knex instance', () => {
             db = knex ({
@@ -44,7 +44,7 @@ describe.only('Practice History Endpoint', function(){
             });
         });
     describe('GET /practice-history', () => {
-        it.only('GET /practice-history responds with 200 and all history that has been logged', () => {
+        it('GET /practice-history responds with 200 and all history that has been logged', () => {
             return supertest(app)
             .get('/api/practice-history')
             .expect(200);

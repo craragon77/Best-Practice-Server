@@ -3,10 +3,8 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 
-describe('User Endpoints', function(){
-    describe('Setting up tests', function(){
+describe.only('User Endpoints', function(){
         let db
-
         before('make knex instance', () => {
             db = knex({
                 client: 'pg',
@@ -14,7 +12,7 @@ describe('User Endpoints', function(){
             });
             app.set('db', db);
         });
-        after('disconnect from db', () => db.destoy());
+        after('disconnect from db', () => db.destroy());
         before('clean the table', () => db('users').truncate());
 
         context('Given there are users in the database', () => {
@@ -39,7 +37,6 @@ describe('User Endpoints', function(){
                 return db.into('users').insert(testUsers)
             });
         });
-    })
     describe('GET /users endoint', () => {
         it('GET /users responds with 200 and all of the users', () => {
         return supertest(app)
