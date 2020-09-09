@@ -2,6 +2,9 @@ const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
+const testUsers = require('./users.fixtures');
+
+
 
 describe('User Endpoints', function(){
         let db
@@ -16,23 +19,6 @@ describe('User Endpoints', function(){
         before('clean the table', () => db('users').truncate());
 
         context('Given there are users in the database', () => {
-            const testUsers = [
-                {
-                    id: 1,
-                    username: 'test-user-1',
-                    password: 'password-1'
-                },
-                {
-                    id: 2,
-                    username: 'test-user-2',
-                    password: 'password-2'
-                },
-                {
-                    id: 3,
-                    username: 'test-user-3',
-                    password: 'password-3'
-                }
-            ];
             beforeEach('insert test users', () => {
                 return db.into('users').insert(testUsers)
             });

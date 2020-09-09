@@ -2,8 +2,9 @@ const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
+const testUserPieces = require('./user_songs.fixtures');
 
-describe('User-Songs endpoint!', function(){
+describe.only('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
             db = knex({
@@ -13,36 +14,15 @@ describe('User-Songs endpoint!', function(){
             app.set('db', db);
         });
         after('disconnect from db', () => db.destroy());
-        before('clean the table', () => db('user_songs').truncate());
-        //before('truncate the songs table apparently', () => db('songs').truncate())
+        before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));
 
         context('Given that users have logged pieces in the database', () => {
-            const testUserPieces = [
-                {
-                    id: 1,
-                    user_id: 1,
-                    song_id: 1,
-                    difficulty: 'hard as the dickens',
-                    instrument: 'guitar',
-                    desired_hours: 1,
-                    comments: 'comment',
-                    date_added: 01-01-1970
-                },
-                {
-                    id: 2,
-                    user_id: 2,
-                    sond_id: 2,
-                    difficulty: 'lets see if this is posting to the database',
-                    instrument: 'guitar',
-                    desired_hours: 1,
-                    comments: 'comment',
-                    date_added: 01-01-1970
-                }
-            ];
             beforeEach('insert test user pieces', () => {
                 return db.into('user_songs').insert(testUserPieces)
             });
         });
+        after('truncate all tables', () => db('user_songs').truncate());
+
     describe('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
             return supertest(app)

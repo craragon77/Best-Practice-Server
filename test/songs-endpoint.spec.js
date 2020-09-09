@@ -1,8 +1,9 @@
 const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
+const testSongs = require('./songs_endpoints.fixtures');
 
-describe.only('Songs Endpoint', function(){
+describe('Songs Endpoint', function(){
         let db
 
         before('make knex instance', () => {
@@ -14,27 +15,10 @@ describe.only('Songs Endpoint', function(){
         });
         after('disconnect from db', () => db.destroy());
         //computer gets mad when I have a table here
-        before('clean the table', () => db('songs').truncate());
+        before('clean the table', () => knex(db('songs').truncate()));
 
 
         context('Given there are users in the database', () => {
-            const testSongs = [
-                {
-                    id: 1,
-                    title: 'Great Gig in the Sky',
-                    composer: 'Pink Floyd'
-                },
-                {
-                    id: 2,
-                    title: 'Money',
-                    composer: 'Pink Floyd'
-                },
-                {
-                    id: 3, 
-                    title: 'Eclipse',
-                    composer: 'Pink Floyd'
-                }
-            ];
             beforeEach('insert test songs', () => {
                 return db.into('songs').insert(testSongs)
             });

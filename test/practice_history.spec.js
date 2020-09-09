@@ -2,6 +2,7 @@ const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
+const testPracticeHistory = require('./practice_history.fixtures');
 
 describe('Practice History Endpoint', function(){
         let db
@@ -19,26 +20,6 @@ describe('Practice History Endpoint', function(){
         //^^^^^^^^^
         console.log(config.TEST_DATABASE_URL)
         context('Given users have logged hours into the database', () => {
-            const testPracticeHistory = [
-                {
-                    id: 1,
-                    song_practice: 1,
-                    start_time: 01-01-1970,
-                    end_time: 01-01-1970
-                },
-                {
-                    id: 2,
-                    song_practice: 2,
-                    start_time: 01-01-1970,
-                    end_time: 01-01-1970
-                },
-                {
-                    id: 3,
-                    song_practice: 3,
-                    start_time: 01-01-1970,
-                    end_time: 01-01-1970
-                }    
-            ];
             beforeEach('insert test practice history', () => {
                 return db.into('practice_history').insert(testPracticeHistory)
             });
