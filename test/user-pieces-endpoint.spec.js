@@ -8,26 +8,26 @@ const supertest = require('supertest');
 describe('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
-            console.dir(db)
+            
             db = knex({
                 client: 'pg',
                 connection: config.TEST_DATABASE_URL
             });
-            app.set('db', db);
+            
         });
-        
-        after('disconnect from db', () => db.destroy());
-        before('clean related table', () => db('users').truncate());
-        before('clean related table', () => db('songs').truncate());
-        before('clean the table', () => db('user_songs').truncate());
+        app.set('db', db);
+        after('disconnect from db', () => app.get('db').destroy());
+        //before('clean related table', () => db('users').truncate());
+        //before('clean related table', () => db('songs').truncate());
+        before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
 
         context('Given that users have logged pieces in the database', () => {
             beforeEach('insert test user pieces', () => {
                 return db.into('user_songs').insert(testUserPieces)
             });
         });
-        after('truncate all tables', () => db('users').truncate());
-        after('truncate all tables', () => db('songs').truncate());
+        //after('truncate all tables', () => db('users').truncate());
+        //after('truncate all tables', () => db('songs').truncate());
         after('truncate all tables', () => db('user_songs').truncate());
 
     describe.only('GET /user-songs', () => {
