@@ -3,7 +3,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 const testUsers = require('./users.fixtures');
-
+const supertest = require('supertest');
 
 
 describe('User Endpoints', function(){
@@ -65,7 +65,7 @@ describe('User Endpoints', function(){
             })
         })
     });
-    describe('GET /user/:id', () => {
+    describe('GET /users/:id', () => {
         it(`returns a 404 if the user's id cannot be found`, () => {
             let missingId = 12345
             return supertest(app)
@@ -75,4 +75,63 @@ describe('User Endpoints', function(){
             .expect(404);
         });
     });
+    describe('DELETE /users/:id', () => {
+        it(`returns a 404 if the user's id cannot be found`, () => {
+            let invalidUserId = 12345;
+            return supertest(app)
+            .delete(`/api/users/${invalidUserId}`)
+            .expect(res => {
+                expect(404);
+                expect(res.body.json).to.eql(`Unable to delete user; user not found`);
+            });
+        })
+        it(`returns a 204 if the user's id is found and deleted`, () => {
+            let validId = 1;
+            return supertest(app)
+            .delete(`/api/users/${validId}`)
+            .expect(res => {
+                expect(204);
+                expect(res.body.json).to.eql(`User successfully deleted`);
+            });
+        });
+    });
+    describe(`PATCH /users/:id`, () => {
+        it('returns 400 if username not included', () =>{
+            let missingUsername = {
+                id: 1,
+                password: 'password',
+            }
+            return supertest(app)
+            .patch(`/api/users/${missingUsername.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql(`please include a valid username and password`);
+            });
+        });
+        it(`returns 400 if password not included`, () => {
+            let missingPassword = {
+                id: 1,
+                username: 'username'
+            }
+            return supertest(app)
+            .patch(`/api/users/${missingPassword.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('please include a valid username and password');
+            });
+        });
+        it(`updates a user when its valid + returns 204 status`, () => {
+            let validUser = {
+                id: 1,
+                username: 'username',
+                password: 'password'
+            };
+            return supertest(app)
+            .patch(`/api/users/${validUser.id}`)
+            .expect(res => {
+                expect(204);
+                expect(res.body.json).to.eql('user successfully updated');
+            });
+        })
+    })
 });

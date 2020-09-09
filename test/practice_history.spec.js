@@ -146,5 +146,19 @@ describe('Practice History Endpoint', function(){
                 expect(res.body.json).to.eql('Please include an end time to update');
             });
         });
+        it('returns 204 and a confirmation of a successful update', () => {
+            let validUpdate = {
+                id: 1,
+                song_practice: 1,
+                start_time: 01-01-1970,
+                end_time: 01-01-1970
+            }
+            return supertest(app)
+            .patch(`/api/practice-history/${validUpdate}`)
+            .expect(res => {
+                expect(204);
+                expect(res.body.json).to.eql('practice history updated successfully!');
+            });
+        })
     });
 });

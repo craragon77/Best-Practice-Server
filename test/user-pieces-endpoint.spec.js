@@ -19,8 +19,8 @@ describe('User-Songs endpoint!', function(){
         after('disconnect from db', () => app.get('db').destroy());
         //before('clean related table', () => db('users').truncate());
         //before('clean related table', () => db('songs').truncate());
-        before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
-
+        //before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
+        before('clean related table', () => db('practice_history', 'user_songs').truncate());
         context('Given that users have logged pieces in the database', () => {
             beforeEach('insert test user pieces', () => {
                 return db.into('user_songs').insert(testUserPieces)
@@ -28,7 +28,7 @@ describe('User-Songs endpoint!', function(){
         });
         //after('truncate all tables', () => db('users').truncate());
         //after('truncate all tables', () => db('songs').truncate());
-        after('truncate all tables', () => db('user_songs').truncate());
+        after('truncate all tables', () => db('practice_history', 'user_songs').truncate());
 
     describe.only('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
