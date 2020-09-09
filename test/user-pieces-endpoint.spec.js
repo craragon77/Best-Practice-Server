@@ -3,27 +3,34 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 const testUserPieces = require('./user_songs.fixtures');
+const supertest = require('supertest');
 
-describe.only('User-Songs endpoint!', function(){
+describe('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
+            console.dir(db)
             db = knex({
                 client: 'pg',
                 connection: config.TEST_DATABASE_URL
             });
             app.set('db', db);
         });
+        
         after('disconnect from db', () => db.destroy());
-        before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));
+        before('clean related table', () => db('users').truncate());
+        before('clean related table', () => db('songs').truncate());
+        before('clean the table', () => db('user_songs').truncate());
 
         context('Given that users have logged pieces in the database', () => {
             beforeEach('insert test user pieces', () => {
                 return db.into('user_songs').insert(testUserPieces)
             });
         });
+        after('truncate all tables', () => db('users').truncate());
+        after('truncate all tables', () => db('songs').truncate());
         after('truncate all tables', () => db('user_songs').truncate());
 
-    describe('GET /user-songs', () => {
+    describe.only('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
             return supertest(app)
             .get('/api/user-songs')
@@ -119,8 +126,140 @@ describe.only('User-Songs endpoint!', function(){
         it(`returns 404 if the user_song id is not found`, () => {
             let user_songId = 12345;
             return supertest(app)
-            .get(`user-songs/${user_songId}`)
+            .get(`/api/user-songs/${user_songId}`)
             .expect(404)
         })
+        it('responds with 201 and the item in question', () => {
+            let user_songId = 1;
+            return supertest(app)
+            .get(`/api/user-songs/${user_songId}`)
+            .expect(res => {
+                expect(201);
+                expect(res.body.user_songId).to.eql(user_songId);
+            })
+
+        })
+    });
+    describe('DELETE user_songs based on the id', () => {
+        it('returns 404 when a user_song is not found', () => {
+            const user_songId = 12345;
+            return supertest(app)
+            .delete(`/api/user-songs/${user_songId}`)
+            .expect(404);
+        })
+        it('deletes user_song when the entry item is found + returns 204', () => {
+            const user_songId = 1;
+            return supertest(app)
+            .delete(`/api/user-songs/${user_songId}`)
+            .expect(res => {
+                expect(204);
+                expect(res.body.json).to.eql('user_song successfully deleted');
+            });
+        })
+    });
+    describe('PATCH user_songs based on the id + updates information accordingly', () => {
+        it('returns 400 if user_id is not included', () => {
+            const missingUserId = {
+                id: 1,
+                song_id: 1,
+                difficulty: 'hard as the dickens',
+                instrument: 'guitar',
+                desired_hours: 1,
+                comments: 'comment',
+                date_added: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/user-songs/${missingUserId.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('please include a user_id to update')
+            });
+        });
+        it('returns 400 if song_id is not included', () => {
+            const missingUserId = {
+                id: 1,
+                user_id: 1,
+                difficulty: 'update',
+                instrument: 'update',
+                desired_hours: 1,
+                comments: 'update',
+                date_added: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/user-songs/${missingUserId.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('please include a song to update information');
+            });
+        });
+        it('returns 400 if difficulty is not included', () => {
+            const missingUserId = {
+                id: 1,
+                user_id: 1,
+                song_id: 1,
+                instrument: 'update',
+                desired_hours: 1,
+                comments: 'update',
+                date_added: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/user-songs/${missingUserId.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('please include a  to update information');
+            });
+        });
+        it('returns 400 if difficulty is not included', () => {
+            const missingUserId = {
+                id: 1,
+                user_id: 1,
+                song_id: 1,
+                difficulty: 'update',
+                desired_hours: 1,
+                comments: 'update',
+                date_added: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/user-songs/${missingUserId.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('please include an instrument  to update information');
+            });
+        });
+        it('returns 400 if desired_hours is not included', () => {
+            const missingUserId = {
+                id: 1,
+                user_id: 1,
+                song_id: 1,
+                difficulty: 'update',
+                instrument: 'update',
+                comments: 'update',
+                date_added: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/user-songs/${missingUserId.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('please include desired hours to update information');
+            });
+        });
+        it('updates successfully', () => {
+            const validUpdate = {
+                id: 1,
+                user_id: 1,
+                song_id: 1,
+                difficulty: 'update',
+                instrument: 'update',
+                desired_hours: 1,
+                comments: 'update',
+                date_added: 01-01-1970
+            };
+        return supertest(app)
+        .patch(`/api/user-songs/${validUpdate.id}`)
+        .expect(res => {
+            expect(204);
+            expect(res.body.json).to.eql('user_song updated successfully');
+        }); 
+    });
     });
 })

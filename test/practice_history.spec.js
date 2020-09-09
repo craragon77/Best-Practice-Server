@@ -3,6 +3,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const config = require('../src/config');
 const testPracticeHistory = require('./practice_history.fixtures');
+const supertest = require('supertest');
 
 describe('Practice History Endpoint', function(){
         let db
@@ -73,10 +74,77 @@ describe('Practice History Endpoint', function(){
         it('404 if the sesson is not found', () => {
             let fakeSesson = 12345;
             return supertest(app)
-            .get(`/practice-history/${fakeSesson}`)
+            .get(`/api/practice-history/${fakeSesson}`)
             //.expect(404, {error: {message: 'practice session not found'}});
             //^^^why does this fail the test?
             .expect(404);
-        })
+        });
+        it('returns the session if found', () => {
+            let sessionId = 1;
+            return supertest(app)
+            .get(`/practice-history/${sessionId}`)
+            .expect(res => {
+                expect(201);
+                expect(res.body.id).to.eql(sessionId);
+            });
+        });
+    });
+    describe('/DELETE practice session by id', () => {
+        it('returns a 404 if the id is not found', () => {
+            let fakeId = 12345;
+            return supertest(app)
+            .delete(`/api/practice-history/${fakeId}`)
+            .expect(404);
+        });
+        it('returns a 204 and confirmation of successfully deletion', () => {
+            let validId = 1;
+            return supertest(app)
+            .delete(`api/practice-history/${validId}`)
+            .expect(res => {
+                expect(204);
+                expect(res.body.json).to.eql('practice history successfully!')
+            });
+        });
     })
+    describe('/PATCH practice session by id', () => {
+        it('returns 400 if a song is not included', () => {
+            let missingSong = {
+                id: 1,
+                start_time: 01-01-1970,
+                end_time: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/practice-history/${missingSong.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('Please include a song to change');
+            });
+        });
+        it('returns 400 if a start date is not included', () => {
+            let missingStart = {
+                id: 1,
+                song_practice: 1,
+                end_time: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/practice-history/${missingStart.id}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('Please include a start time to update');
+            });
+        });
+        it('returns 400 if an end date is not included', () => {
+            let missingStart = {
+                id: 1,
+                song_practice: 1,
+                end_time: 01-01-1970
+            };
+            return supertest(app)
+            .patch(`/api/pratice-history/${missingStart}`)
+            .expect(res => {
+                expect(400);
+                expect(res.body.json).to.eql('Please include an end time to update');
+            });
+        });
+    });
 });
