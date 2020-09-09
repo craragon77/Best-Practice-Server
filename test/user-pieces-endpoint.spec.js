@@ -4,6 +4,7 @@ const app = require('../src/app');
 const config = require('../src/config');
 const testUserPieces = require('./user_songs.fixtures');
 const supertest = require('supertest');
+const testUsers = require('./users.fixtures');
 
 describe('User-Songs endpoint!', function(){
         let db
@@ -22,11 +23,15 @@ describe('User-Songs endpoint!', function(){
         //before('clean related table', () => db('songs').truncate());
         //before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
         before('clean related table', () => db('practice_history', 'user_songs').truncate());
-        context('Given that users have logged pieces in the database', () => {
+        //contents of context are not being called when they are within the context()
+        //context('Given that users have logged pieces in the database', () => {
             beforeEach('insert test user pieces', () => {
-                return db.into('user_songs').insert(testUserPieces)
+                console.log('echo')
+                //doesn't insert because of foreign key constraints
+                return db.into('user_songs').insert(testUserPieces),
+                db.into('users').insert(testUsers)
             });
-        });
+        //});
         //after('truncate all tables', () => db('users').truncate());
         //after('truncate all tables', () => db('songs').truncate());
         console.log('the db is: ' + db)
