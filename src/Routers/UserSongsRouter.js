@@ -79,13 +79,13 @@ userSongsRouter
         if(!user_id || user_id == ''){
             res.status(400).json('please include a user_id to update');
         } else if(!song_id || song_id == ''){
-            res.status(400).json('please include a song to update information')
+            res.status(400).json('please include a song to update information');
         } else if(!difficulty || difficulty == ''){
-            res.status(400).json('please include a difficulty level to update information')
+            res.status(400).json('please include a difficulty level to update information');
         } else if(!instrument || instrument == ''){
             res.status(400).json('please include an instrument to update information')
         } else if(!desired_hours || desired_hours == ''){
-            res.status(400).json('please include a song to update information')
+            res.status(400).json('please include desired hours to update information')
         } else{
             UserSongsServices.updateUserSongs(knexInstance, userSongId, userSongUpdates)
                 .then(user_song => {

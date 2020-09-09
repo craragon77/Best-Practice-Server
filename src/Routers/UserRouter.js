@@ -88,10 +88,10 @@ userRouter
                 } 
                 else{
                     res.json('user successfully updated').status(204);
-                }
+                };
             })
-            .catch(next)
-        }
+            .catch(next);
+        };
     })
 
 module.exports = userRouter;

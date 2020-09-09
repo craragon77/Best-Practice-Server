@@ -21,7 +21,10 @@ songsRouter
     const newSong = {title, composer};
     if(!title || title == ''){
         res.status(400).json('all new songs must include the title of the piece')
-    } else {
+    } else if (!composer || composer == ''){
+        res.status(400).json('all new songs must include the composer of the piece')
+    }
+    else {
         SongsService.postNewSong(knexInstance, newSong)
             .then(song => {
                 res.status(201).json(song);

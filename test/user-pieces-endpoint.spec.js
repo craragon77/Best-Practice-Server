@@ -13,9 +13,10 @@ describe('User-Songs endpoint!', function(){
                 client: 'pg',
                 connection: config.TEST_DATABASE_URL
             });
-            app.set('db', db);
+            app.set('db', db)
         });
-        
+        ;
+        console.log(testUserPieces)
         after('disconnect from db', () => app.get('db').destroy());
         //before('clean related table', () => db('users').truncate());
         //before('clean related table', () => db('songs').truncate());
@@ -28,6 +29,7 @@ describe('User-Songs endpoint!', function(){
         });
         //after('truncate all tables', () => db('users').truncate());
         //after('truncate all tables', () => db('songs').truncate());
+        console.log('the db is: ' + db)
         after('truncate all tables', () => db('practice_history', 'user_songs').truncate());
 
     describe.only('GET /user-songs', () => {
