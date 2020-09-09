@@ -13,9 +13,9 @@ describe('User-Songs endpoint!', function(){
                 client: 'pg',
                 connection: config.TEST_DATABASE_URL
             });
-            
+            app.set('db', db);
         });
-        app.set('db', db);
+        
         after('disconnect from db', () => app.get('db').destroy());
         //before('clean related table', () => db('users').truncate());
         //before('clean related table', () => db('songs').truncate());
