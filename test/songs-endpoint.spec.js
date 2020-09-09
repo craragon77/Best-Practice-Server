@@ -2,8 +2,7 @@ const {expect} = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
 
-describe('Songs Endpoint', function(){
-    describe('Setting up tests', function(){
+describe.only('Songs Endpoint', function(){
         let db
 
         before('make knex instance', () => {
@@ -40,7 +39,6 @@ describe('Songs Endpoint', function(){
                 return db.into('songs').insert(testSongs)
             });
         });
-    });
     describe('GET /songs', () => {
         it('GET /songs responds with 200 and all of the songs', () => {
             return supertest(app)
