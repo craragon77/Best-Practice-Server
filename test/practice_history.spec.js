@@ -4,6 +4,9 @@ const app = require('../src/app');
 const config = require('../src/config');
 const testPracticeHistory = require('./practice_history.fixtures');
 const supertest = require('supertest');
+const testUserSongs = require('./user_songs.fixtures');
+const testUsers = require('./users.fixtures');
+const testSongs = require('./songs_endpoints.fixtures');
 
 describe('Practice History Endpoint', function(){
         let db
@@ -17,15 +20,26 @@ describe('Practice History Endpoint', function(){
         });
         after('disconnect from db', () => db.destroy());
         //error comes from here
-        before('clean the table', () => db('practice_history').truncate());
+        before('clean the table', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
         //^^^^^^^^^
-        console.log(config.TEST_DATABASE_URL)
-        context('Given users have logged hours into the database', () => {
-            beforeEach('insert test practice history', () => {
-                return db.into('practice_history').insert(testPracticeHistory)
-            });
+        //console.log(config.TEST_DATABASE_URL)
+        //context('Given users have logged hours into the database', () => {
+        beforeEach('insert test users', () => {
+            return db.into('users').insert(testUsers);
+        })
+        beforeEach('insert test songs', () => {
+            return db.into('songs').insert(testSongs);
+        })
+        beforeEach('insert test user_songs', () => {
+            return db.into('user_songs').insert(testUserSongs);
+        })
+        beforeEach('insert test practice history', () => {
+            return db.into('practice_history').insert(testPracticeHistory)
         });
-    describe('GET /practice-history', () => {
+        
+        afterEach('truncate tables', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
+        //});
+    describe.only('GET /practice-history', () => {
         it('GET /practice-history responds with 200 and all history that has been logged', () => {
             return supertest(app)
             .get('/api/practice-history')
