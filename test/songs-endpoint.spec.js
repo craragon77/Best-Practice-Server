@@ -121,7 +121,7 @@ describe('Songs Endpoint', function(){
             });
         });
     });
-    describe.only('PATCH /songs', () => {
+    describe('PATCH /songs', () => {
         it('the PATCH lacks a composer', () => {
             let missingComposer = {
                 id: 1,

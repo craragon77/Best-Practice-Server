@@ -6,7 +6,7 @@ const testUsers = require('./users.fixtures');
 const supertest = require('supertest');
 
 
-describe('User Endpoints', function(){
+describe.only('User Endpoints', function(){
         let db
         before('make knex instance', () => {
             db = knex({
@@ -16,13 +16,12 @@ describe('User Endpoints', function(){
             app.set('db', db);
         });
         after('disconnect from db', () => db.destroy());
-        before('clean the table', () => db('users').truncate());
-
-        context('Given there are users in the database', () => {
-            beforeEach('insert test users', () => {
-                return db.into('users').insert(testUsers)
-            });
+        before('clean the table', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
+        afterEach('clean the table', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
+        beforeEach('insert test users', () => {
+            return db.into('users').insert(testUsers)
         });
+        
     describe('GET /users endoint', () => {
         it('GET /users responds with 200 and all of the users', () => {
         return supertest(app)
@@ -74,6 +73,16 @@ describe('User Endpoints', function(){
             //.expect(404, {error: {message: `user not found`}})
             .expect(404);
         });
+        it(`returns a 201 and the user if the id is valid`, () => {
+            let validId = 1;
+            return supertest(app)
+            .get(`/api/users/${validId}`)
+            .expect(res => {
+                expect(201)
+                //console.log(res)
+                expect(res.body.id).to.eql(validId)
+            })
+        })
     });
     describe('DELETE /users/:id', () => {
         it(`returns a 404 if the user's id cannot be found`, () => {
@@ -82,7 +91,7 @@ describe('User Endpoints', function(){
             .delete(`/api/users/${invalidUserId}`)
             .expect(res => {
                 expect(404);
-                expect(res.body.json).to.eql(`Unable to delete user; user not found`);
+                expect(res.body.error.message).to.eql(`Unable to delete user; user not found`);
             });
         })
         it(`returns a 204 if the user's id is found and deleted`, () => {
@@ -91,7 +100,7 @@ describe('User Endpoints', function(){
             .delete(`/api/users/${validId}`)
             .expect(res => {
                 expect(204);
-                expect(res.body.json).to.eql(`User successfully deleted`);
+                expect(res.body).to.eql(`User successfully deleted`);
             });
         });
     });
@@ -103,9 +112,10 @@ describe('User Endpoints', function(){
             }
             return supertest(app)
             .patch(`/api/users/${missingUsername.id}`)
+            .send(missingUsername)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql(`please include a valid username and password`);
+                expect(res.body).to.eql(`please include a valid username and password`);
             });
         });
         it(`returns 400 if password not included`, () => {
@@ -115,22 +125,24 @@ describe('User Endpoints', function(){
             }
             return supertest(app)
             .patch(`/api/users/${missingPassword.id}`)
+            .send(missingPassword)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('please include a valid username and password');
+                expect(res.body).to.eql('please include a valid username and password');
             });
         });
         it(`updates a user when its valid + returns 204 status`, () => {
             let validUser = {
                 id: 1,
-                username: 'username',
-                password: 'password'
+                username: 'update',
+                password: 'update'
             };
             return supertest(app)
             .patch(`/api/users/${validUser.id}`)
+            .send(validUser)
             .expect(res => {
                 expect(204);
-                expect(res.body.json).to.eql('user successfully updated');
+                expect(res.body).to.eql('user successfully updated');
             });
         })
     })
