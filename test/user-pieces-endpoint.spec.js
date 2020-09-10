@@ -5,11 +5,11 @@ const config = require('../src/config');
 const testUserPieces = require('./user_songs.fixtures');
 const supertest = require('supertest');
 const testUsers = require('./users.fixtures');
+const testSongs = require('./songs_endpoints.fixtures');
 
 describe('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
-            
             db = knex({
                 client: 'pg',
                 connection: config.TEST_DATABASE_URL
@@ -18,33 +18,33 @@ describe('User-Songs endpoint!', function(){
         });
         ;
         console.log(testUserPieces)
-        after('disconnect from db', () => app.get('db').destroy());
+        after('disconnect from db', () => db.destroy());
         //before('clean related table', () => db('users').truncate());
         //before('clean related table', () => db('songs').truncate());
         //before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
-        before('clean related table', () => db('practice_history', 'user_songs').truncate());
+        before('clean related table', () => db('practice_history','user_songs').truncate());
         //contents of context are not being called when they are within the context()
-        //context('Given that users have logged pieces in the database', () => {
+        context('Given there are pieces in the database', () => {
             beforeEach('insert test user pieces', () => {
                 console.log('echo')
                 //doesn't insert because of foreign key constraints
-                return db.into('user_songs').insert(testUserPieces),
-                db.into('users').insert(testUsers)
+                return db.into('user_songs').insert(testUserPieces), console.log('user_songs truncated successfully')
+                
             });
-        //});
+        });
         //after('truncate all tables', () => db('users').truncate());
         //after('truncate all tables', () => db('songs').truncate());
         console.log('the db is: ' + db)
-        after('truncate all tables', () => db('practice_history', 'user_songs').truncate());
+        afterEach('truncate all tables', () => db('practice_history','user_songs').truncate());
 
-    describe.only('GET /user-songs', () => {
+    describe('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
             return supertest(app)
             .get('/api/user-songs')
             .expect(200)
         });
     });
-    describe('POST /user-songs', () => {
+    describe.only('POST /user-songs', () => {
         it(`sends a 400 and an error if there is no user_id`, () => {
             const noUserId = {
                 song_id: 1,
