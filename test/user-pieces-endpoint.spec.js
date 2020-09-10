@@ -22,21 +22,31 @@ describe('User-Songs endpoint!', function(){
         //before('clean related table', () => db('users').truncate());
         //before('clean related table', () => db('songs').truncate());
         //before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
-        before('clean related table', () => db('practice_history','user_songs', 'songs','users').truncate());
+        before(`clean the table`, () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`))
         //contents of context are not being called when they are within the context()
         //context('Given there are pieces in the database', () => {
-            beforeEach('insert test user pieces', () => {
-                console.log('echo')
-                //doesn't insert because of foreign key constraints
-                return db.into('user_songs').insert(testUserPieces),
-                db.into('songs').insert(testSongs),
-                db.into('users').insert(testUsers)
-            });
+        
+        beforeEach('insert test user pieces', () => {
+            console.log('echo 2')
+            //doesn't insert because of foreign key constraints
+            return db.into('users').insert(testUsers)
+        });
+        beforeEach('insert test user pieces', () => {
+            console.log('echo 3')
+            //doesn't insert because of foreign key constraints
+            return db.into('songs').insert(testSongs)
+        });
+        beforeEach('insert test user pieces', () => {
+            console.log('echo 1')
+            //doesn't insert because of foreign key constraints
+            return db.into('user_songs').insert(testUserPieces)
+        });
         //});
         //after('truncate all tables', () => db('users').truncate());
         //after('truncate all tables', () => db('songs').truncate());
         console.log('the db is: ' + db)
-        afterEach('truncate all tables', () => db('practice_history','user_songs', 'songs', 'users', ).truncate());
+        //afterEach('truncate all tables', () => db('practice_history','user_songs', 'songs', 'users').truncate());
+        afterEach('truncate all tables', () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`));
 
     describe('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
@@ -109,7 +119,7 @@ describe('User-Songs endpoint!', function(){
         it('posts a valid user piece if all the requirements are met', () => {
             const validUserSong = {
                 //doesn't work when the id is 1 but DOES work when the id is 13?
-                song_id: 13,
+                song_id: 1,
                 user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
