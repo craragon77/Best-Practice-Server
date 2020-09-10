@@ -24,15 +24,15 @@ describe('User-Songs endpoint!', function(){
         //before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
         before('clean related table', () => db('practice_history','user_songs', 'songs','users').truncate());
         //contents of context are not being called when they are within the context()
-        context('Given there are pieces in the database', () => {
+        //context('Given there are pieces in the database', () => {
             beforeEach('insert test user pieces', () => {
                 console.log('echo')
                 //doesn't insert because of foreign key constraints
                 return db.into('user_songs').insert(testUserPieces),
-                db.into('user_songs').insert(testSongs),
-                db.into('user_songs').insert(testUsers)
+                db.into('songs').insert(testSongs),
+                db.into('users').insert(testUsers)
             });
-        });
+        //});
         //after('truncate all tables', () => db('users').truncate());
         //after('truncate all tables', () => db('songs').truncate());
         console.log('the db is: ' + db)
