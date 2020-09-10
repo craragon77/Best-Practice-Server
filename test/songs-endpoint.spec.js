@@ -3,7 +3,11 @@ const knex = require('knex');
 const app = require('../src/app');
 const testSongs = require('./songs_endpoints.fixtures');
 const supertest = require('supertest');
-const { expectCt } = require('helmet');
+const config = require('../src/config');
+const testUsers = require('./users.fixtures');
+const testUserSongs = require('./user_songs.fixtures');
+const testPracticeHistory = require('./practice_history.fixtures');
+
 
 describe('Songs Endpoint', function(){
         let db
@@ -11,32 +15,42 @@ describe('Songs Endpoint', function(){
         before('make knex instance', () => {
             db = knex({
                 client: 'pg',
-                connection: process.env.TEST_DATABASE_URL
+                connection: config.TEST_DATABASE_URL
             });
             app.set('db', db);
         });
         after('disconnect from db', () => db.destroy());
         //computer gets mad when I have a table here
-        before('clean the table', () => knex(db('songs').truncate()));
+        before('clean the table', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
+        afterEach('clean tables again', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
 
-
-        context('Given there are users in the database', () => {
-            beforeEach('insert test songs', () => {
-                return db.into('songs').insert(testSongs)
-            });
+        beforeEach('insert test users', () => {
+            return db.into('users').insert(testUsers);
+        })
+        beforeEach('insert test songs', () => {
+            return db.into('songs').insert(testSongs);
         });
+        beforeEach('insert test user_songs', () => {
+            return db.into('user_songs').insert(testUserSongs);
+        })
+        beforeEach('insert test practice_history', () =>{
+            return db.into('practice_history').insert(testPracticeHistory);
+        })
+    
     describe('GET /songs', () => {
         it('GET /songs responds with 200 and all of the songs', () => {
             return supertest(app)
             .get('/api/songs')
             .expect(200)
         });
+    });
+    describe('GET /songs/:id', () => {
         it('responds with 404 if the song cannot be found', () => {
             let missingId = 12345;
             return supertest(app)
             .get(`/api/songs/${missingId}`)
             .expect(404);
-        })
+        });
         it('responds with the song if the id is valid', () => {
             let validId = 1;
             return supertest(app)
@@ -46,7 +60,7 @@ describe('Songs Endpoint', function(){
                 expect(res.body.id).to.eql(validId);
             });
         });
-    });
+    })
     describe('POST /songs', () => {
         it('the POST lacks a title', () => {
             let missingTitle = {
@@ -54,9 +68,10 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .post(`/api/songs/`)
+            .send(missingTitle)
             .expect(res => {
                 expect(400)
-                expect(res.body.json).to.eql('all new songs must include the title of the piece');
+                expect(res.body).to.eql('all new songs must include the title of the piece');
             });
         });
         it('the POST lacks a composer', () => {
@@ -65,9 +80,10 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .post(`/api/songs`)
+            .send(missingComposer)
             .expect(res => {
                 expect(400)
-                expect(res.body.json).to.eql(`all new songs must include the composer`);
+                expect(res.body).to.eql(`all new songs must include the composer of the piece`);
             });
         });
         it('the POST meets the requirements', () => {
@@ -77,6 +93,7 @@ describe('Songs Endpoint', function(){
             }
             return supertest(app)
             .post(`/api/songs`)
+            .send(validSong)
             .expect(res => {
                 expect(201);
                 expect(res.body.title).to.eql(validSong.title);
@@ -91,7 +108,7 @@ describe('Songs Endpoint', function(){
             .delete(`/api/songs/${missingId}`)
             .expect(res => {
                 expect(404);
-                expect(res.body.json).to.eql('song not found');
+                expect(res.body.error.message).to.eql(`song not found`);
             });
         })
         it(`responds with 204 if the id can be found`, () => {
@@ -100,11 +117,11 @@ describe('Songs Endpoint', function(){
             .delete(`/api/songs/${id}`)
             .expect(res => {
                 expect(204);
-                expect(res.body.json).to.eql(`song successfully deleted!`);
+                expect(res.body).to.eql(`song successfully deleted!`);
             });
         });
     });
-    describe('PATCH /songs', () => {
+    describe.only('PATCH /songs', () => {
         it('the PATCH lacks a composer', () => {
             let missingComposer = {
                 id: 1,
@@ -112,9 +129,10 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/songs/${missingComposer.id}`)
+            .send(missingComposer)
             .expect(res => {
                 expect(400)
-                expect(res.body.json).to.eql(`all new songs must include the composer`);
+                expect(res.body).to.eql(`please include a valid composer`);
             });
         });
         it('the PATCH lacks a title', () => {
@@ -124,9 +142,24 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/songs/${missingTitle.id}`)
+            .send(missingTitle)
             .expect(res => {
                 expect(400)
-                expect(res.body.json).to.eql(`all new songs must include the composer`);
+                expect(res.body).to.eql(`please include a valid title`);
+            });
+        });
+        it('the PATCH id cannot be found', () => {
+            let missingId = {
+                id: 12345,
+                title: 'I Want You',
+                composer: 'The Beatles'
+            }
+            return supertest(app)
+            .patch(`/api/songs/${missingId.id}`)
+            .send(missingId)
+            .expect(res => {
+                expect(404);
+                expect(res.body).to.eql('song cannot be found');
             });
         });
         it('the PATCH works with valid information', () => {
@@ -137,10 +170,10 @@ describe('Songs Endpoint', function(){
             }
             return supertest(app)
             .patch(`/api/songs/${validPatch.id}`)
+            .send(validPatch)
             .expect(res => {
                 expect(204)
-                expect(res.body.titel).to.eql(validPatch.title);
-                expect(res.body.composer).to.eql(validPathc.composer);
+                expect(res.body).to.eql('song updated successfully')
             })
         })
     });

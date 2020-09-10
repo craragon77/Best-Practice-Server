@@ -39,7 +39,7 @@ describe('Practice History Endpoint', function(){
         
         afterEach('truncate tables', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
         //});
-    describe.only('GET /practice-history', () => {
+    describe('GET /practice-history', () => {
         it('GET /practice-history responds with 200 and all history that has been logged', () => {
             return supertest(app)
             .get('/api/practice-history')
@@ -96,7 +96,7 @@ describe('Practice History Endpoint', function(){
         it('returns the session if found', () => {
             let sessionId = 1;
             return supertest(app)
-            .get(`/practice-history/${sessionId}`)
+            .get(`/api/practice-history/${sessionId}`)
             .expect(res => {
                 expect(201);
                 expect(res.body.id).to.eql(sessionId);
@@ -113,10 +113,10 @@ describe('Practice History Endpoint', function(){
         it('returns a 204 and confirmation of successfully deletion', () => {
             let validId = 1;
             return supertest(app)
-            .delete(`api/practice-history/${validId}`)
+            .delete(`/api/practice-history/${validId}`)
             .expect(res => {
                 expect(204);
-                expect(res.body.json).to.eql('practice history successfully!')
+                expect(res.body).to.eql('practice history successfully!')
             });
         });
     })
@@ -124,54 +124,57 @@ describe('Practice History Endpoint', function(){
         it('returns 400 if a song is not included', () => {
             let missingSong = {
                 id: 1,
-                start_time: 01-01-1970,
-                end_time: 01-01-1970
+                start_time: '01-01-1970',
+                end_time: '01-01-1970'
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingSong.id}`)
+            .send(missingSong)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('Please include a song to change');
+                expect(res.body).to.eql('Please include a song to update');
             });
         });
         it('returns 400 if a start date is not included', () => {
             let missingStart = {
                 id: 1,
-                song_practice: 1,
-                end_time: 01-01-1970
+                song_practiced: 1,
+                end_time: '01-01-1970'
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingStart.id}`)
+            .send(missingStart)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('Please include a start time to update');
+                expect(res.body).to.eql('Please include a start time to update');
             });
         });
         it('returns 400 if an end date is not included', () => {
-            let missingStart = {
+            let missingEnd = {
                 id: 1,
-                song_practice: 1,
-                end_time: 01-01-1970
+                song_practiced: 1,
+                start_time: '01-01-1970'
             };
             return supertest(app)
-            .patch(`/api/pratice-history/${missingStart}`)
+            .patch(`/api/pratice-history/${missingEnd.id}`)
+            .send(missingEnd)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('Please include an end time to update');
+                expect(res.body).to.eql('Please include an end time to update');
             });
         });
         it('returns 204 and a confirmation of a successful update', () => {
             let validUpdate = {
                 id: 1,
-                song_practice: 1,
-                start_time: 01-01-1970,
-                end_time: 01-01-1970
+                song_practiced: 1,
+                start_time: '01-01-1970',
+                end_time: '01-01-1970'
             }
             return supertest(app)
-            .patch(`/api/practice-history/${validUpdate}`)
+            .patch(`/api/practice-history/${validUpdate.id}`)
             .expect(res => {
-                expect(204);
-                expect(res.body.json).to.eql('practice history updated successfully!');
+                expect(204)
+                expect(res.body).to.eql('practice history updated successfully!');
             });
         })
     });
