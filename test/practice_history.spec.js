@@ -156,10 +156,11 @@ describe('Practice History Endpoint', function(){
                 start_time: '01-01-1970'
             };
             return supertest(app)
-            .patch(`/api/pratice-history/${missingEnd.id}`)
+            .patch(`/api/practice-history/${missingEnd.id}`)
             .send(missingEnd)
             .expect(res => {
                 expect(400);
+                console.log(res)
                 expect(res.body).to.eql('Please include an end time to update');
             });
         });
@@ -172,6 +173,7 @@ describe('Practice History Endpoint', function(){
             }
             return supertest(app)
             .patch(`/api/practice-history/${validUpdate.id}`)
+            .send(validUpdate)
             .expect(res => {
                 expect(204)
                 expect(res.body).to.eql('practice history updated successfully!');

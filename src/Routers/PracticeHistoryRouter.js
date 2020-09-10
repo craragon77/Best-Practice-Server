@@ -66,8 +66,9 @@ practiceHistoryRouter
         const p_h_id = req.params.id;
         const {song_practiced, start_time, end_time} = req.body;
         let practiceHistoryChanges = {song_practiced, start_time, end_time};
-        if(!song_practiced || song_practiced == " "){
-            res.status(400).json('Please include a song to change');
+
+        if(!song_practiced || song_practiced == ' '){
+            res.status(400).json('Please include a song to update');
         } else if(!start_time || start_time == ' '){
             res.status(400).json('Please include a start time to update');
         } else if (!end_time || end_time == ' '){

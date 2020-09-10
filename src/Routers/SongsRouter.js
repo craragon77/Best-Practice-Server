@@ -75,7 +75,7 @@ songsRouter
         if(!title || title === ''){
             res.status(400).json('please include a valid title');
         } else if (!composer || composer === ''){
-            res.status(400).json('please inlcude a valid composer or artist');
+            res.status(400).json('please include a valid composer');
         } else {
             SongsService.updateSongs(knexInstance, songId, songToUpdate)
                 .then(song => {

@@ -6,7 +6,7 @@ const testUsers = require('./users.fixtures');
 const supertest = require('supertest');
 
 
-describe.only('User Endpoints', function(){
+describe('User Endpoints', function(){
         let db
         before('make knex instance', () => {
             db = knex({
