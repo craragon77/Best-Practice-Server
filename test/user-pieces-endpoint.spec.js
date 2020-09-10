@@ -7,7 +7,7 @@ const supertest = require('supertest');
 const testUsers = require('./users.fixtures');
 const testSongs = require('./songs_endpoints.fixtures');
 
-describe('User-Songs endpoint!', function(){
+describe.only('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
             db = knex({
@@ -55,7 +55,7 @@ describe('User-Songs endpoint!', function(){
             .expect(200)
         });
     });
-    describe.only('POST /user-songs', () => {
+    describe('POST /user-songs', () => {
         it(`sends a 400 and an error if there is no user_id`, () => {
             const noUserId = {
                 song_id: 1,
@@ -153,7 +153,7 @@ describe('User-Songs endpoint!', function(){
             .get(`/api/user-songs/${user_songId}`)
             .expect(res => {
                 expect(201);
-                expect(res.body.user_songId).to.eql(user_songId);
+                expect(res.body.id).to.eql(user_songId);
             })
 
         })
@@ -171,7 +171,7 @@ describe('User-Songs endpoint!', function(){
             .delete(`/api/user-songs/${user_songId}`)
             .expect(res => {
                 expect(204);
-                expect(res.body.json).to.eql('user_song successfully deleted');
+                expect(res.body).to.eql('user_song successfully deleted');
             });
         })
     });
@@ -188,13 +188,14 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .patch(`/api/user-songs/${missingUserId.id}`)
+            .send(missingUserId)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('please include a user_id to update')
+                expect(res.body).to.eql('please include a user_id to update')
             });
         });
         it('returns 400 if song_id is not included', () => {
-            const missingUserId = {
+            const missingSong = {
                 id: 1,
                 user_id: 1,
                 difficulty: 'update',
@@ -204,14 +205,15 @@ describe('User-Songs endpoint!', function(){
                 date_added: 01-01-1970
             };
             return supertest(app)
-            .patch(`/api/user-songs/${missingUserId.id}`)
+            .patch(`/api/user-songs/${missingSong.id}`)
+            .send(missingSong)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('please include a song to update information');
+                expect(res.body).to.eql('please include a song to update');
             });
         });
         it('returns 400 if difficulty is not included', () => {
-            const missingUserId = {
+            const missingDifficulty = {
                 id: 1,
                 user_id: 1,
                 song_id: 1,
@@ -221,14 +223,15 @@ describe('User-Songs endpoint!', function(){
                 date_added: 01-01-1970
             };
             return supertest(app)
-            .patch(`/api/user-songs/${missingUserId.id}`)
+            .patch(`/api/user-songs/${missingDifficulty.id}`)
+            .send(missingDifficulty)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('please include a  to update information');
+                expect(res.body).to.eql('please include a difficulty level to update information');
             });
         });
-        it('returns 400 if difficulty is not included', () => {
-            const missingUserId = {
+        it('returns 400 if instrument is not included', () => {
+            const missingInstrument = {
                 id: 1,
                 user_id: 1,
                 song_id: 1,
@@ -238,14 +241,15 @@ describe('User-Songs endpoint!', function(){
                 date_added: 01-01-1970
             };
             return supertest(app)
-            .patch(`/api/user-songs/${missingUserId.id}`)
+            .patch(`/api/user-songs/${missingInstrument.id}`)
+            .send(missingInstrument)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('please include an instrument  to update information');
+                expect(res.body).to.eql('please include an instrument to update information');
             });
         });
         it('returns 400 if desired_hours is not included', () => {
-            const missingUserId = {
+            const missingHours = {
                 id: 1,
                 user_id: 1,
                 song_id: 1,
@@ -255,10 +259,11 @@ describe('User-Songs endpoint!', function(){
                 date_added: 01-01-1970
             };
             return supertest(app)
-            .patch(`/api/user-songs/${missingUserId.id}`)
+            .patch(`/api/user-songs/${missingHours.id}`)
+            .send(missingHours)
             .expect(res => {
                 expect(400);
-                expect(res.body.json).to.eql('please include desired hours to update information');
+                expect(res.body).to.eql('please include desired hours to update information');
             });
         });
         it('updates successfully', () => {
@@ -274,9 +279,10 @@ describe('User-Songs endpoint!', function(){
             };
         return supertest(app)
         .patch(`/api/user-songs/${validUpdate.id}`)
+        .send(validUpdate)
         .expect(res => {
             expect(204);
-            expect(res.body.json).to.eql('user_song updated successfully');
+            expect(res.body).to.eql('user_song updated successfully');
         }); 
     });
     });

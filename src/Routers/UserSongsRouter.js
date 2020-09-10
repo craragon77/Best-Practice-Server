@@ -79,7 +79,7 @@ userSongsRouter
         if(!user_id || user_id == ''){
             res.status(400).json('please include a user_id to update');
         } else if(!song_id || song_id == ''){
-            res.status(400).json('please include a song to update information');
+            res.status(400).json('please include a song to update');
         } else if(!difficulty || difficulty == ''){
             res.status(400).json('please include a difficulty level to update information');
         } else if(!instrument || instrument == ''){
