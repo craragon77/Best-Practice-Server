@@ -4,9 +4,11 @@ const bodyParser = express.json();
 const UserService = require('../Services/UserService');
 const knex = require('knex');
 const jsonParser = express.json();
+const {requireAuth} = require('../middleware/basic-auth');
 
 userRouter
     .route('/')
+    .all(requireAuth)
     .get((req, res, next) => {
         const knexInstance = req.app.get('db')
         UserService.getAllUsers(knexInstance)
@@ -42,6 +44,7 @@ userRouter
 
 userRouter
     .route('/:id')
+    .all(requireAuth)
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         let userId = req.params.id;

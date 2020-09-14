@@ -21,11 +21,25 @@ describe('User Endpoints', function(){
         beforeEach('insert test users', () => {
             return db.into('users').insert(testUsers)
         });
-        
-    describe('GET /users endoint', () => {
+        function makeAuthHeader(user){
+            const token = Buffer.from(`${user.username} : ${user.password}`).toString('base64');
+            return `Basic ${token}`
+        }
+    
+    describe.only('Protected endpoints', ()=> {
+        it(`responds with 401 'missing basic token' when there isn't a token`, () => {
+            return supertest(app)
+            .get(`/api/users`)
+            .expect(401, {error: `Missing basic token`})
+        } )
+    })
+    
+    describe.only('GET /users endoint', () => {
         it('GET /users responds with 200 and all of the users', () => {
+        console.log(makeAuthHeader(testUsers[0]))
         return supertest(app)
         .get('/api/users')
+        .set('Authorization', makeAuthHeader(testUsers[0]))
         .expect(200)
         });
     });
