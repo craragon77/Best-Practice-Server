@@ -36,13 +36,18 @@ describe('Practice History Endpoint', function(){
         beforeEach('insert test practice history', () => {
             return db.into('practice_history').insert(testPracticeHistory)
         });
-        
         afterEach('truncate tables', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
-        //});
+
+        function makeAuthHeader(user){
+            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
+            return `basic ${token}`
+        }
+
     describe('GET /practice-history', () => {
         it('GET /practice-history responds with 200 and all history that has been logged', () => {
             return supertest(app)
             .get('/api/practice-history')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(200);
         });
     });
@@ -54,6 +59,7 @@ describe('Practice History Endpoint', function(){
             };
             return supertest(app)
             .post('/api/practice-history')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noSong)
             .expect(400);
         });
@@ -64,6 +70,7 @@ describe('Practice History Endpoint', function(){
             };
             return supertest(app)
             .post('/api/practice-history')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noStart)
             .expect(400);
         })
@@ -75,6 +82,7 @@ describe('Practice History Endpoint', function(){
             }
             return supertest(app)
             .post('/api/practice-history')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(validPost)
             .expect(res => {
                 expect(res.body.song_practiced).to.eql(validPost.song_practiced);
@@ -89,14 +97,14 @@ describe('Practice History Endpoint', function(){
             let fakeSesson = 12345;
             return supertest(app)
             .get(`/api/practice-history/${fakeSesson}`)
-            //.expect(404, {error: {message: 'practice session not found'}});
-            //^^^why does this fail the test?
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(404);
         });
         it('returns the session if found', () => {
             let sessionId = 1;
             return supertest(app)
             .get(`/api/practice-history/${sessionId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(201);
                 expect(res.body.id).to.eql(sessionId);
@@ -108,12 +116,14 @@ describe('Practice History Endpoint', function(){
             let fakeId = 12345;
             return supertest(app)
             .delete(`/api/practice-history/${fakeId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(404);
         });
         it('returns a 204 and confirmation of successfully deletion', () => {
             let validId = 1;
             return supertest(app)
             .delete(`/api/practice-history/${validId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(204);
                 expect(res.body).to.eql('practice history successfully!')
@@ -129,6 +139,7 @@ describe('Practice History Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingSong.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingSong)
             .expect(res => {
                 expect(400);
@@ -143,6 +154,7 @@ describe('Practice History Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingStart.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingStart)
             .expect(res => {
                 expect(400);
@@ -157,6 +169,7 @@ describe('Practice History Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingEnd.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingEnd)
             .expect(res => {
                 expect(400);
@@ -173,6 +186,7 @@ describe('Practice History Endpoint', function(){
             }
             return supertest(app)
             .patch(`/api/practice-history/${validUpdate.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(validUpdate)
             .expect(res => {
                 expect(204)

@@ -3,9 +3,11 @@ const songsRouter = express.Router();
 const SongsService = require('../Services/SongsService');
 const knex = require('knex');
 const jsonParser = express.json();
+const {requireAuth} = require('../middleware/basic-auth');
 
 songsRouter
 .route('/')
+.all(requireAuth)
 .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     SongsService.getAllSongs(knexInstance)
@@ -35,6 +37,7 @@ songsRouter
 
 songsRouter
     .route('/:id')
+    .all(requireAuth)
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         const songId = req.params.id;

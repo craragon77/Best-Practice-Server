@@ -3,9 +3,11 @@ const practiceHistoryRouter = express.Router();
 const knex = require('knex');
 const PracticeHistoryServices = require('../Services/PracticeHistoryServices');
 const jsonParser = express.json();
+const {requireAuth} = require('../middleware/basic-auth');
 
 practiceHistoryRouter
     .route('/')
+    .all(requireAuth)
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         PracticeHistoryServices.getAllPracticeHistory(knexInstance)
@@ -35,6 +37,7 @@ practiceHistoryRouter
     })
 practiceHistoryRouter
     .route('/:id')
+    .all(requireAuth)
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         let p_h_id = req.params.id;

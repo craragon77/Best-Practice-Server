@@ -36,11 +36,17 @@ describe('Songs Endpoint', function(){
         beforeEach('insert test practice_history', () =>{
             return db.into('practice_history').insert(testPracticeHistory);
         })
+
+        function makeAuthHeader(user){
+            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
+            return `basic ${token}`
+        }
     
     describe('GET /songs', () => {
         it('GET /songs responds with 200 and all of the songs', () => {
             return supertest(app)
             .get('/api/songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(200)
         });
     });
@@ -49,12 +55,14 @@ describe('Songs Endpoint', function(){
             let missingId = 12345;
             return supertest(app)
             .get(`/api/songs/${missingId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(404);
         });
         it('responds with the song if the id is valid', () => {
             let validId = 1;
             return supertest(app)
             .get(`/api/songs/${validId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(201)
                 expect(res.body.id).to.eql(validId);
@@ -68,6 +76,7 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .post(`/api/songs/`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingTitle)
             .expect(res => {
                 expect(400)
@@ -80,6 +89,7 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .post(`/api/songs`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingComposer)
             .expect(res => {
                 expect(400)
@@ -93,6 +103,7 @@ describe('Songs Endpoint', function(){
             }
             return supertest(app)
             .post(`/api/songs`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(validSong)
             .expect(res => {
                 expect(201);
@@ -106,6 +117,7 @@ describe('Songs Endpoint', function(){
             let missingId = 12345;
             return supertest(app)
             .delete(`/api/songs/${missingId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(404);
                 expect(res.body.error.message).to.eql(`song not found`);
@@ -115,6 +127,7 @@ describe('Songs Endpoint', function(){
             let id = 1;
             return supertest(app)
             .delete(`/api/songs/${id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(204);
                 expect(res.body).to.eql(`song successfully deleted!`);
@@ -129,6 +142,7 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/songs/${missingComposer.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingComposer)
             .expect(res => {
                 expect(400)
@@ -142,6 +156,7 @@ describe('Songs Endpoint', function(){
             };
             return supertest(app)
             .patch(`/api/songs/${missingTitle.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingTitle)
             .expect(res => {
                 expect(400)
@@ -156,6 +171,7 @@ describe('Songs Endpoint', function(){
             }
             return supertest(app)
             .patch(`/api/songs/${missingId.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingId)
             .expect(res => {
                 expect(404);
@@ -170,6 +186,7 @@ describe('Songs Endpoint', function(){
             }
             return supertest(app)
             .patch(`/api/songs/${validPatch.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(validPatch)
             .expect(res => {
                 expect(204)

@@ -14,7 +14,7 @@ userRouter
         UserService.getAllUsers(knexInstance)
         //and there is an issue here for some reason :(
             .then(users => {
-                console.log(Date('2020-09-03T16:32:40.864Z'))
+                console.log(req.get('Authorization'))
                 res.json(users)
             })
             .catch(next)

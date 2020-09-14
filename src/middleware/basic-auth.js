@@ -6,7 +6,7 @@ function requireAuth(req, res, next){
             error: 'Missing basic token'
         })
     } else {
-        basicToken = authToken.slice('basic '.length, authToken.length);
+        basicToken = authToken.slice('basic '.length, authToken.length - 1);
     };
     const [tokenUserName, tokenPassword] = Buffer
         .from(basicToken, 'base64')

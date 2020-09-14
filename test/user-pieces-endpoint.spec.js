@@ -19,16 +19,10 @@ describe('User-Songs endpoint!', function(){
         ;
         console.log(testUserPieces)
         after('disconnect from db', () => db.destroy());
-        //before('clean related table', () => db('users').truncate());
-        //before('clean related table', () => db('songs').truncate());
-        //before('clean the table', () => knex.raw('TRUNCATE user_songs, users, songs RESTART IDENTITY CASCADE'));;
         before(`clean the table`, () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`))
-        //contents of context are not being called when they are within the context()
-        //context('Given there are pieces in the database', () => {
+        
         
         beforeEach('insert test user pieces', () => {
-            console.log('echo 2')
-            //doesn't insert because of foreign key constraints
             return db.into('users').insert(testUsers)
         });
         beforeEach('insert test user pieces', () => {
@@ -48,10 +42,16 @@ describe('User-Songs endpoint!', function(){
         //afterEach('truncate all tables', () => db('practice_history','user_songs', 'songs', 'users').truncate());
         afterEach('truncate all tables', () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`));
 
+        function makeAuthHeader(user){
+            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
+            return `basic ${token}`
+        }
+
     describe('GET /user-songs', () => {
         it('GET /user-pieces responds with 200 and all the pieces any user has logged', () => {
             return supertest(app)
             .get('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(200)
         });
     });
@@ -65,6 +65,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .post('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noUserId)
             .expect(400);
         });
@@ -77,6 +78,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .post('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noSongId)
             .expect(400);
         });
@@ -89,6 +91,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .post('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noDifficulty)
             .expect(400);
         });
@@ -101,6 +104,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .post('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noInstrument)
             .expect(400);
         });
@@ -113,6 +117,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .post('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noHours)
             .expect(400);
         });
@@ -128,6 +133,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .post('/api/user-songs')
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(validUserSong)
             .expect(res => {
                 expect(res.body.song_id).to.eql(validUserSong.song_id);
@@ -145,12 +151,14 @@ describe('User-Songs endpoint!', function(){
             let user_songId = 12345;
             return supertest(app)
             .get(`/api/user-songs/${user_songId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(404)
         })
         it('responds with 201 and the item in question', () => {
             let user_songId = 1;
             return supertest(app)
             .get(`/api/user-songs/${user_songId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(201);
                 expect(res.body.id).to.eql(user_songId);
@@ -163,12 +171,14 @@ describe('User-Songs endpoint!', function(){
             const user_songId = 12345;
             return supertest(app)
             .delete(`/api/user-songs/${user_songId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(404);
         })
         it('deletes user_song when the entry item is found + returns 204', () => {
             const user_songId = 1;
             return supertest(app)
             .delete(`/api/user-songs/${user_songId}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(204);
                 expect(res.body).to.eql('user_song successfully deleted');
@@ -188,6 +198,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .patch(`/api/user-songs/${missingUserId.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingUserId)
             .expect(res => {
                 expect(400);
@@ -206,6 +217,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .patch(`/api/user-songs/${missingSong.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingSong)
             .expect(res => {
                 expect(400);
@@ -224,6 +236,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .patch(`/api/user-songs/${missingDifficulty.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingDifficulty)
             .expect(res => {
                 expect(400);
@@ -242,6 +255,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .patch(`/api/user-songs/${missingInstrument.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingInstrument)
             .expect(res => {
                 expect(400);
@@ -260,6 +274,7 @@ describe('User-Songs endpoint!', function(){
             };
             return supertest(app)
             .patch(`/api/user-songs/${missingHours.id}`)
+            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(missingHours)
             .expect(res => {
                 expect(400);
@@ -279,6 +294,7 @@ describe('User-Songs endpoint!', function(){
             };
         return supertest(app)
         .patch(`/api/user-songs/${validUpdate.id}`)
+        .set('Authorization', makeAuthHeader(testUsers[0]))
         .send(validUpdate)
         .expect(res => {
             expect(204);
