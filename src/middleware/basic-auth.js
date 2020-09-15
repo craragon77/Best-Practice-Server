@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 function requireAuth(req, res, next){
     const authToken = req.get('Authorization') || ''
 
@@ -22,12 +24,23 @@ function requireAuth(req, res, next){
         .where({username: tokenUserName})
         .first()
         .then(user => {
-            if(!user || user.password !== tokenPassword){
+            if(!user){
                 return res.status(401).json({
                     error: 'Unauthorized request; User not found'
                 });
             }
-            next()
+            //why doesn't this want to work with me :(
+            return bcrypt.compare(tokenPassword, user.password)
+                .then(passwordsMatch => {
+                    if(!passwordsMatch){
+                        console.log('the password match here = ' + passwordsMatch)
+                        return res.status(401).json({
+                            error: 'Unauthorized request; Invalid Password'
+                        })
+                    }
+                    req.user = user
+                    next()
+                })
         })
         .catch(next);
 }
