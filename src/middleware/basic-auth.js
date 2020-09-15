@@ -1,8 +1,11 @@
 const bcrypt = require('bcryptjs');
+const AuthService = require('../auth/auth-service');
 
 function requireAuth(req, res, next){
     const authToken = req.get('Authorization') || ''
 
+    let basicToken
+    //thx for catching this Silveri!
     if(!authToken.toLowerCase().startsWith('basic ')){
         return res.status(401).json({
             error: 'Missing basic token'
@@ -32,7 +35,7 @@ function requireAuth(req, res, next){
             //why doesn't this want to work with me :(
             return bcrypt.compare(tokenPassword, user.password)
                 .then(passwordsMatch => {
-                    if(!passwordsMatch){
+                    if(tokenPassword !== user.password){
                         console.log('the password match here = ' + passwordsMatch)
                         return res.status(401).json({
                             error: 'Unauthorized request; Invalid Password'
@@ -41,7 +44,7 @@ function requireAuth(req, res, next){
                     req.user = user
                     next()
                 })
-        })
+            })
         .catch(next);
 }
 

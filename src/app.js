@@ -10,6 +10,7 @@ const songsRouter = require('./Routers/SongsRouter');
 const userSongsRouter = require('./Routers/UserSongsRouter');
 const practiceHistroyRouter = require('./Routers/PracticeHistoryRouter');
 const config = require('./config');
+const authRouter = require('./auth/auth-router');
 
 const app = express()
 
@@ -36,6 +37,7 @@ app.use('/api/users', userRouter);
 app.use('/api/songs', songsRouter);
 app.use('/api/user-songs', userSongsRouter);
 app.use('/api/practice-history', practiceHistroyRouter);
+app.use('/api/auth', authRouter);
 
 app.use(function errorHandler(error, req, res, next) {
     let response
