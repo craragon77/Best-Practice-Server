@@ -33,7 +33,7 @@ function requireAuth(req, res, next){
                 });
             }
             //why doesn't this want to work with me :(
-            return bcrypt.compare(tokenPassword, user.password)
+            return AuthService.comparePasswords(tokenPassword, user.password)
                 .then(passwordsMatch => {
                     if(tokenPassword !== user.password){
                         console.log('the password match here = ' + passwordsMatch)
@@ -41,6 +41,7 @@ function requireAuth(req, res, next){
                             error: 'Unauthorized request; Invalid Password'
                         })
                     }
+                    console.log('the password match here = ' + passwordsMatch)
                     req.user = user
                     next()
                 })

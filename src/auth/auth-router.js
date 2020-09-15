@@ -1,4 +1,5 @@
 const express = require('express');
+const AuthService = require('./auth-service');
 const authRouter = express.Router();
 const jsonParser = express.json();
 
@@ -7,12 +8,37 @@ authRouter
         const {username, password} = req.body;
         const loginUser = {username, password};
 
-        for(const [key, value] of Object.entries(loginUser))
-            if(value == null)
+        if(!username || !username == null){
             return res.status(400).json({
-                error: `Missing ${key} in request body`
+                error: `Missing username in request body`
             })
-        res.send('ok')
+        } else if (!password || password == null){
+            return res.status(400).json({
+                error: `Missing password in request body`
+            })
+        }
+        AuthService.getUserWithUserName(req.app.get('db'), loginUser.username)
+            .then(dbUser => {
+                if(!dbUser)
+                    return res.status(400).json({
+                        error: 'Database user cannot be found at this time'
+                    });
+                return AuthService.comparePasswords(loginUser.password, dbUser.password)
+                    .then(compareMatch => {
+                        //why is it that loginUser.password !== dbUser.password works but !compareMatch doesn't?
+                        if(loginUser.password !== dbUser.password){
+                            return res.status(400).json({
+                                error: 'Incorrect password'
+                            })
+                        }
+                        const sub = dbUser.username;
+                        const payload = {id: dbUser.id};
+                        res.send({
+                            authToken: AuthService.createJwt(sub, payload)
+                        })
+                    })
+            })
+            .catch(next);
     })
 
 module.exports = authRouter;
