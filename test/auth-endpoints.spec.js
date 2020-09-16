@@ -7,7 +7,7 @@ const config = require('../src/config');
 const jwt = require('jsonwebtoken');
 
 
-describe('Auth Endpoints', function(){
+describe.only('Auth Endpoints', function(){
     let db
 
     before('make knex instance', () => {
@@ -32,7 +32,7 @@ describe('Auth Endpoints', function(){
     }
 
 
-        it.only(`responds with 400 when a username is missing`, () => {
+        it(`responds with 400 when a username is missing`, () => {
             const loginAttempt = {
                 password: testUsers.password
             }
@@ -58,7 +58,7 @@ describe('Auth Endpoints', function(){
             .expect(res => {
                 expect(400)
                 //the error message doesn't match? why
-                //expect(res.error.message).to.eql(`Missing password in request body`)
+                expect(res.error.message).to.eql(`Missing password in request body`)
             })
         });
         it(`responds with 400 if the username is invalid`, () => {
@@ -68,6 +68,7 @@ describe('Auth Endpoints', function(){
             };
             return supertest(app)
                 .post('/api/auth/login')
+                .set('Content-Type', 'application/json')
                 .send(loginAttempt)
                 .expect(res => {
                     expect(400)
