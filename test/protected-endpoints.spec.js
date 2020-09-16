@@ -4,10 +4,11 @@ const supertest = require('supertest');
 const testUsers = require('./users.fixtures');
 const { expect } = require('chai');
 const config = require('../src/config');
+const jwt = require('jsonwebtoken');
 
 
 
-describe.skip('Protected Endpoints', () => {
+describe('Protected Endpoints', () => {
     before('make knex instance', () => {
         db = knex({
             client: 'pg',
@@ -28,4 +29,40 @@ describe.skip('Protected Endpoints', () => {
         })
         return `Bearer ${token}`
     }
+    it(`returns 401 if there isn't a token`, () => {
+        const missingToken = {
+            username: 'username',
+            password: 'password'
+        };
+        return supertest(app)
+        .get('/api/users')
+        .expect(401)
+        /*.expect(res => {
+            expect(401);
+            //same issue here?
+            expect(res.error).to.eql(`Missing Bearer Token`)
+        }) */
+        
+    });
+    it(`returns a 401 if the token isn't valid`, () => {
+        const user = {
+            username: 'username',
+            password: 'password'
+        };
+        const invalidToken = 'bearer 12345'
+        return supertest(app)
+        .get('/api/users')
+        .set('Authorization', invalidToken)
+        .expect(401);
+    });
+    it(`returns a 200 if the token is valid`, () => {
+        return supertest(app)
+        .get('/api/users')
+        .set('Authorisation', makeAuthHeader(testUsers[0]))
+        .expect(res => {
+            expect(200);
+            expect(res.error).to.eql('testing')
+        });
+
+    })
 })

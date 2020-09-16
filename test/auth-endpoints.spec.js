@@ -7,7 +7,7 @@ const config = require('../src/config');
 const jwt = require('jsonwebtoken');
 
 
-describe.only('Auth Endpoints', function(){
+describe('Auth Endpoints', function(){
     let db
 
     before('make knex instance', () => {
@@ -32,13 +32,14 @@ describe.only('Auth Endpoints', function(){
     }
 
 
-        it(`responds with 400 when a username is missing`, () => {
+        it.only(`responds with 400 when a username is missing`, () => {
             const loginAttempt = {
                 password: testUsers.password
             }
             
             return supertest(app)
             .post('/api/auth/login')
+            .set('Content-Type', 'application/json')
             .send(loginAttempt)
             .expect(res => {
                 expect(400)
@@ -52,6 +53,7 @@ describe.only('Auth Endpoints', function(){
 
             return supertest(app)
             .post('/api/auth/login')
+            .set('Content-Type', 'application/json')
             .send(loginAttempt)
             .expect(res => {
                 expect(400)
