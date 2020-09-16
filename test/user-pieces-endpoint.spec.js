@@ -8,7 +8,7 @@ const testUsers = require('./users.fixtures');
 const testSongs = require('./songs_endpoints.fixtures');
 const jwt = require('jsonwebtoken');
 
-describe('User-Songs endpoint!', function(){
+describe.only('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
             db = knex({
@@ -60,7 +60,7 @@ describe('User-Songs endpoint!', function(){
         });
     });
     describe('POST /user-songs', () => {
-        it(`sends a 400 and an error if there is no user_id`, () => {
+        /*it(`sends a 400 and an error if there is no user_id`, () => {
             const noUserId = {
                 song_id: 1,
                 difficulty: 'hard',
@@ -72,10 +72,10 @@ describe('User-Songs endpoint!', function(){
             .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noUserId)
             .expect(400);
-        });
-        it(`sends a 400 and an error if there is no user_id`, () => {
+        }); */
+        //^^^^not sure if I need to cut this one given the web tokens
+        it(`sends a 400 and an error if there is no song`, () => {
             const noSongId = {
-                user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
                 desired_hours: 1
@@ -86,10 +86,9 @@ describe('User-Songs endpoint!', function(){
             .send(noSongId)
             .expect(400);
         });
-        it(`sends a 400 and an error if there is no user_id`, () => {
+        it(`sends a 400 and an error if there is no desired hours`, () => {
             const noDifficulty = {
                 song_id: 1,
-                user_id: 1,
                 instrument: 'guitar',
                 desired_hours: 1
             };
@@ -99,10 +98,9 @@ describe('User-Songs endpoint!', function(){
             .send(noDifficulty)
             .expect(400);
         });
-        it(`sends a 400 and an error if there is no user_id`, () => {
+        it(`sends a 400 and an error if there is no instrument`, () => {
             const noInstrument = {
                 song_id: 1,
-                user_id: 1,
                 difficulty: 'hard',
                 desired_hours: 1
             };
@@ -112,10 +110,9 @@ describe('User-Songs endpoint!', function(){
             .send(noInstrument)
             .expect(400);
         });
-        it(`sends a 400 and an error if there is no user_id`, () => {
+        it(`sends a 400 and an error if there is no desired hours`, () => {
             const noHours = {
                 song_id: 1,
-                user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
             };
@@ -129,7 +126,6 @@ describe('User-Songs endpoint!', function(){
             const validUserSong = {
                 //doesn't work when the id is 1 but DOES work when the id is 13?
                 song_id: 1,
-                user_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
                 desired_hours: 1,
@@ -141,7 +137,7 @@ describe('User-Songs endpoint!', function(){
             .send(validUserSong)
             .expect(res => {
                 expect(res.body.song_id).to.eql(validUserSong.song_id);
-                expect(res.body.user_id).to.eql(validUserSong.user_id);
+                expect(res.body.user_id).to.eql(testUserPieces[0].user_id);
                 expect(res.body.difficulty).to.eql(validUserSong.difficulty);
                 expect(res.body.instrument).to.eql(validUserSong.instrument);
                 expect(res.body.desired_hours).to.eql(validUserSong.desired_hours);
@@ -190,7 +186,7 @@ describe('User-Songs endpoint!', function(){
         })
     });
     describe('PATCH user_songs based on the id + updates information accordingly', () => {
-        it('returns 400 if user_id is not included', () => {
+        /*it('returns 400 if user_id is not included', () => {
             const missingUserId = {
                 id: 1,
                 song_id: 1,
@@ -199,7 +195,7 @@ describe('User-Songs endpoint!', function(){
                 desired_hours: 1,
                 comments: 'comment',
                 date_added: 01-01-1970
-            };
+            }; 
             return supertest(app)
             .patch(`/api/user-songs/${missingUserId.id}`)
             .set('Authorization', makeAuthHeader(testUsers[0]))
@@ -208,11 +204,10 @@ describe('User-Songs endpoint!', function(){
                 expect(400);
                 expect(res.body).to.eql('please include a user_id to update')
             });
-        });
+        }); */
         it('returns 400 if song_id is not included', () => {
             const missingSong = {
                 id: 1,
-                user_id: 1,
                 difficulty: 'update',
                 instrument: 'update',
                 desired_hours: 1,
@@ -231,7 +226,6 @@ describe('User-Songs endpoint!', function(){
         it('returns 400 if difficulty is not included', () => {
             const missingDifficulty = {
                 id: 1,
-                user_id: 1,
                 song_id: 1,
                 instrument: 'update',
                 desired_hours: 1,
@@ -250,7 +244,6 @@ describe('User-Songs endpoint!', function(){
         it('returns 400 if instrument is not included', () => {
             const missingInstrument = {
                 id: 1,
-                user_id: 1,
                 song_id: 1,
                 difficulty: 'update',
                 desired_hours: 1,
@@ -269,7 +262,6 @@ describe('User-Songs endpoint!', function(){
         it('returns 400 if desired_hours is not included', () => {
             const missingHours = {
                 id: 1,
-                user_id: 1,
                 song_id: 1,
                 difficulty: 'update',
                 instrument: 'update',
@@ -288,7 +280,6 @@ describe('User-Songs endpoint!', function(){
         it('updates successfully', () => {
             const validUpdate = {
                 id: 1,
-                user_id: 1,
                 song_id: 1,
                 difficulty: 'update',
                 instrument: 'update',

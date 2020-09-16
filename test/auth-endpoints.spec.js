@@ -7,7 +7,7 @@ const config = require('../src/config');
 const jwt = require('jsonwebtoken');
 
 
-describe.only('Auth Endpoints', function(){
+describe('Auth Endpoints', function(){
     let db
 
     before('make knex instance', () => {
