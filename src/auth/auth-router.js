@@ -33,7 +33,7 @@ authRouter
                         }
                         const sub = dbUser.username;
                         const payload = {id: dbUser.id};
-                        res.send({
+                        res.json({
                             authToken: AuthService.createJwt(sub, payload)
                         })
                     })
