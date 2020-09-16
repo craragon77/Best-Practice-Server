@@ -78,13 +78,12 @@ userSongsRouter
         const knexInstance = req.app.get('db');
         const userSongId = req.params.id;
         const {
-            user_id, song_id, difficulty, instrument, 
+            song_id, difficulty, instrument, 
             desired_hours, comments
         } = req.body;
-        const userSongUpdates = {user_id, song_id, difficulty, instrument, desired_hours, comments};
-        if(!user_id || user_id == ''){
-            res.status(400).json('please include a user_id to update');
-        } else if(!song_id || song_id == ''){
+        const userSongUpdates = {song_id, difficulty, instrument, desired_hours, comments};
+
+        if(!song_id || song_id == ''){
             res.status(400).json('please include a song to update');
         } else if(!difficulty || difficulty == ''){
             res.status(400).json('please include a difficulty level to update information');
@@ -93,6 +92,7 @@ userSongsRouter
         } else if(!desired_hours || desired_hours == ''){
             res.status(400).json('please include desired hours to update information')
         } else{
+            userSongUpdates.user_id = req.user.id
             UserSongsServices.updateUserSongs(knexInstance, userSongId, userSongUpdates)
                 .then(user_song => {
                     if(!user_song){
