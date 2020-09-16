@@ -4,6 +4,7 @@ const app = require('../src/app');
 const config = require('../src/config');
 const testUsers = require('./users.fixtures');
 const supertest = require('supertest');
+const jwt = require('jsonwebtoken');
 
 
 describe('User Endpoints', function(){
@@ -21,16 +22,19 @@ describe('User Endpoints', function(){
         beforeEach('insert test users', () => {
             return db.into('users').insert(testUsers)
         });
-        function makeAuthHeader(user){
-            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64');
-            return `basic ${token}`
+        function makeAuthHeader(user, secret = process.env.JWT_SECRET){
+            const token = jwt.sign({id: user.id}, secret, {
+                subject: user.username,
+                algorithm: 'HS256'
+            })
+            return `Bearer ${token}`
         }
     
     describe('Protected endpoints', ()=> {
         it(`responds with 401 'missing basic token' when there isn't a token`, () => {
             return supertest(app)
             .get(`/api/users`)
-            .expect(401, {error: `Missing basic token`})
+            .expect(401, {error: `Missing bearer token`})
         } )
     })
     

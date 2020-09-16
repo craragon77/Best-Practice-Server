@@ -4,6 +4,7 @@ const supertest = require('supertest');
 const testUsers = require('./users.fixtures');
 const { expect } = require('chai');
 const config = require('../src/config');
+const jwt = require('jsonwebtoken');
 
 
 describe.only('Auth Endpoints', function(){
@@ -22,9 +23,12 @@ describe.only('Auth Endpoints', function(){
     beforeEach('insert test users', () => {
         return db.into('users').insert(testUsers)
     });
-    function makeAuthHeader(user){
-        const token = Buffer.from(`${user.username}:${user.password}`).toString('base64');
-        return `basic ${token}`
+    function makeAuthHeader(user, secret = process.env.JWT_SECRET){
+        const token = jwt.sign({id: user.id}, secret, {
+            subject: user.username,
+            algorithm: 'HS256'
+        })
+        return `Bearer ${token}`
     }
 
 
@@ -35,11 +39,10 @@ describe.only('Auth Endpoints', function(){
             
             return supertest(app)
             .post('/api/auth/login')
-            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(loginAttempt)
             .expect(res => {
                 expect(400)
-                //expect(res.error.message).to.eql(`Missing username in request body`)
+                expect(res.error.message).to.eql(`Missing username in request body`)
             })
         })
         it(`responds with 400 if a password is missing`, () => {
@@ -49,12 +52,24 @@ describe.only('Auth Endpoints', function(){
 
             return supertest(app)
             .post('/api/auth/login')
-            .set('Authorization', makeAuthHeader(testUsers[0]))
             .send(loginAttempt)
             .expect(res => {
                 expect(400)
                 //the error message doesn't match? why
                 //expect(res.error.message).to.eql(`Missing password in request body`)
             })
-        })
+        });
+        it(`responds with 400 if the username is invalid`, () => {
+            const loginAttempt = {
+                username: 'ahh skeet skeet',
+                password: 'password-1'
+            };
+            return supertest(app)
+                .post('/api/auth/login')
+                .send(loginAttempt)
+                .expect(res => {
+                    expect(400)
+                    expect(res.error.message).to.eql('testing')
+                });
+        });
 })

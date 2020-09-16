@@ -3,7 +3,7 @@ const practiceHistoryRouter = express.Router();
 const knex = require('knex');
 const PracticeHistoryServices = require('../Services/PracticeHistoryServices');
 const jsonParser = express.json();
-const {requireAuth} = require('../middleware/basic-auth');
+const {requireAuth} = require('../middleware/jwt-auth');
 
 practiceHistoryRouter
     .route('/')

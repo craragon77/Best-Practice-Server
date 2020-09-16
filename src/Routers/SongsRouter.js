@@ -3,7 +3,7 @@ const songsRouter = express.Router();
 const SongsService = require('../Services/SongsService');
 const knex = require('knex');
 const jsonParser = express.json();
-const {requireAuth} = require('../middleware/basic-auth');
+const {requireAuth} = require('../middleware/jwt-auth');
 
 songsRouter
 .route('/')

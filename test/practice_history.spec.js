@@ -7,6 +7,7 @@ const supertest = require('supertest');
 const testUserSongs = require('./user_songs.fixtures');
 const testUsers = require('./users.fixtures');
 const testSongs = require('./songs_endpoints.fixtures');
+const jwt = require('jsonwebtoken');
 
 describe('Practice History Endpoint', function(){
         let db
@@ -38,9 +39,12 @@ describe('Practice History Endpoint', function(){
         });
         afterEach('truncate tables', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
 
-        function makeAuthHeader(user){
-            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
-            return `basic ${token}`
+        function makeAuthHeader(user, secret = process.env.JWT_SECRET){
+            const token = jwt.sign({id: user.id}, secret, {
+                subject: user.username,
+                algorithm: 'HS256'
+            })
+            return `Bearer ${token}`
         }
 
     describe('GET /practice-history', () => {

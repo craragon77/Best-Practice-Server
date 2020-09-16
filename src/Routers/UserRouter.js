@@ -4,7 +4,7 @@ const bodyParser = express.json();
 const UserService = require('../Services/UserService');
 const knex = require('knex');
 const jsonParser = express.json();
-const {requireAuth} = require('../middleware/basic-auth');
+const {requireAuth} = require('../middleware/jwt-auth');
 
 userRouter
     .route('/')

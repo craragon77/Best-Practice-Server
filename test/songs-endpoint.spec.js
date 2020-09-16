@@ -7,6 +7,7 @@ const config = require('../src/config');
 const testUsers = require('./users.fixtures');
 const testUserSongs = require('./user_songs.fixtures');
 const testPracticeHistory = require('./practice_history.fixtures');
+const jwt = require('jsonwebtoken');
 
 
 describe('Songs Endpoint', function(){
@@ -37,9 +38,12 @@ describe('Songs Endpoint', function(){
             return db.into('practice_history').insert(testPracticeHistory);
         })
 
-        function makeAuthHeader(user){
-            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
-            return `basic ${token}`
+        function makeAuthHeader(user, secret = process.env.JWT_SECRET){
+            const token = jwt.sign({id: user.id}, secret, {
+                subject: user.username,
+                algorithm: 'HS256'
+            })
+            return `Bearer ${token}`
         }
     
     describe('GET /songs', () => {

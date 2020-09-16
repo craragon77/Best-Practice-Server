@@ -6,6 +6,7 @@ const testUserPieces = require('./user_songs.fixtures');
 const supertest = require('supertest');
 const testUsers = require('./users.fixtures');
 const testSongs = require('./songs_endpoints.fixtures');
+const jwt = require('jsonwebtoken');
 
 describe('User-Songs endpoint!', function(){
         let db
@@ -42,9 +43,12 @@ describe('User-Songs endpoint!', function(){
         //afterEach('truncate all tables', () => db('practice_history','user_songs', 'songs', 'users').truncate());
         afterEach('truncate all tables', () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`));
 
-        function makeAuthHeader(user){
-            const token = Buffer.from(`${user.username}:${user.password}`).toString('base64')
-            return `basic ${token}`
+        function makeAuthHeader(user, secret = process.env.JWT_SECRET){
+            const token = jwt.sign({id: user.id}, secret, {
+                subject: user.username,
+                algorithm: 'HS256'
+            })
+            return `Bearer ${token}`
         }
 
     describe('GET /user-songs', () => {
