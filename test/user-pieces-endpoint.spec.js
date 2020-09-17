@@ -8,7 +8,7 @@ const testUsers = require('./users.fixtures');
 const testSongs = require('./songs_endpoints.fixtures');
 const jwt = require('jsonwebtoken');
 
-describe.only('User-Songs endpoint!', function(){
+describe('User-Songs endpoint!', function(){
         let db
         before('make knex instance', () => {
             db = knex({

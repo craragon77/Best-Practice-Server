@@ -1,15 +1,15 @@
 const testUsers = [
     {
-        username: 'test-user-1',
-        password: 'password-1'
+        username: 'Test-user-1',
+        password: 'Password-1!'
     },
     {
-        username: 'test-user-2',
-        password: 'password-2'
+        username: 'Test-user-2',
+        password: 'Password-2!'
     },
     {
-        username: 'test-user-3',
-        password: 'password-3'
+        username: 'Test-user-3',
+        password: 'Password-3!'
     }
 ];
 

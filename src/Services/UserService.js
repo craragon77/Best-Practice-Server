@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 const UserService = {
     getAllUsers(knex){
         return knex.select().from('users');
@@ -23,6 +25,15 @@ const UserService = {
         return knex('users')
         .where({id})
         .update(newUserFields);
+    },
+    hasUserWithUserName(db, username){
+        return db('users')
+        .where({username})
+        .first()
+        .then(user => !!user)
+    },
+    hashPassword(password){
+        return bcrypt.hash(password, 10)
     }
 }
 

@@ -5,9 +5,10 @@ const config = require('../src/config');
 const testUsers = require('./users.fixtures');
 const supertest = require('supertest');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs')
 
 
-describe('User Endpoints', function(){
+describe.only('User Endpoints', function(){
         let db
         before('make knex instance', () => {
             db = knex({
@@ -55,7 +56,7 @@ describe('User Endpoints', function(){
             }
             return supertest(app)
             .post('/api/users')
-            .set('Authorization', makeAuthHeader(testUsers[0]))
+            //.set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noUsername)
             .expect(400)
 
@@ -66,26 +67,95 @@ describe('User Endpoints', function(){
             }
             return supertest(app)
             .post('/api/users')
-            .set('Authorization', makeAuthHeader(testUsers[0]))
+            //.set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noPassword)
             .expect(400)
         });
         it(`posts successfully when a user includes both a valid name and password`, () => {
             const newValidUser = {
-                username: 'username',
-                password: 'password'
+                username: 'Posted_Username',
+                password: 'Password1!'
             };
             return supertest(app)
             .post('/api/users')
-            .set('Authorization', makeAuthHeader(testUsers[0]))
+            //.set('Authorization', makeAuthHeader(testUsers[0]))
             .send(newValidUser)
             .expect(res => {
+                expect(201)
                 expect(res.body.username).to.eql(newValidUser.username);
-                expect(res.body.password).to.eql(newValidUser.password);
                 expect(res.body).to.have.property('id');
-            })
-        })
-    });
+                return bcrypt.compare(res.password, newValidUser.password)
+                .then(compare => {
+                    expect(compare).to.be.true
+                })
+            });
+        });
+        it(`responds with 400 + error message if password.length > 72 characters`, () => {
+            const invalidUser = {
+                username: 'username1',
+                password: '*'.repeat(73)
+            };
+            return supertest(app)
+            .post('/api/users')
+            .send(invalidUser)
+            .expect(res => {
+                expect(400)
+                expect(res.body).to.eql('Password must be between 8 and 36 characters')
+            });
+        });
+        it(`responds with 400 + error messasge if password.length < 8`, () => {
+            const invalidUser = {
+                username: 'Username1',
+                password: 'd'
+            }
+            return supertest(app)
+            .post('/api/users')
+            .send(invalidUser)
+            .expect(res => {
+                expect(400)
+                expect(res.body).to.eql('Password must be between 8 and 36 characters')
+            });
+        });
+        it('responds 400 if there are spaces in the front or back of a password', () => {
+            const invalidUser = {
+                username: 'Username1',
+                password: ' Password1! '
+            };
+            return supertest(app)
+            .post('/api/users')
+            .send(invalidUser)
+            .expect(res => {
+                expect(400)
+                expect('Password must not include any spaces')
+            });
+        });
+        it('responds with 400 if the password is not complex enough', () => {
+            const notComplexPassword = {
+                username: 'Username1',
+                password: 'Password1!'
+            };
+            return supertest(app)
+            .post('/api/users')
+            .send(notComplexPassword)
+            .expect(res => {
+                expect(400)
+                expect('Password must include at least one upper and one lower case character, as well as at least one number and one special character')
+            });
+        });
+        it('responds with 400 if the username is already taken', () => {
+            const takenUsername = {
+                username: 'Test-user-1',
+                password: 'Password-1!'
+            };
+            return supertest(app)
+            .post('/api/users')
+            .send(takenUsername)
+            .expect(res => {
+                expect(400)
+                expect()
+            });
+        }); 
+    }); 
     describe('GET /users/:id', () => {
         it(`returns a 404 if the user's id cannot be found`, () => {
             let missingId = 12345
@@ -160,8 +230,8 @@ describe('User Endpoints', function(){
         it(`updates a user when its valid + returns 204 status`, () => {
             let validUser = {
                 id: 1,
-                username: 'update',
-                password: 'update'
+                username: 'Update!',
+                password: 'Update!'
             };
             return supertest(app)
             .patch(`/api/users/${validUser.id}`)
