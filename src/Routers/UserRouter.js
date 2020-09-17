@@ -40,7 +40,9 @@ userRouter
         else{
             UserService.hasUserWithUserName(knexInstance, newUser)
                 .then(taken => {
+                    console.log('the taken means: '+ taken)
                     if(taken){
+                        //taken is currently a truthy??? why?
                         res.status(400).json({
                         error: 'Username already taken. Please try again with a new username'
                         })
