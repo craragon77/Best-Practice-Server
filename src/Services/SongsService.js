@@ -23,6 +23,9 @@ const SongsService = {
         return knex('songs')
         .where({id})
         .update(newSongFields);
+    },
+    getAllSongByUserId(knex, user_id){
+        return knex.select().from('songs').where('user_id', user_id)
     }
     
 }

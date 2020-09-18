@@ -38,7 +38,7 @@ userRouter
             res.status(400).json('Password must include at least one upper and one lower case character, as well as at least one number and one special character')
         }
         else{
-            UserService.hasUserWithUserName(knexInstance, newUser)
+            UserService.hasUserWithUserName(knexInstance, newUser.username)
                 .then(taken => {
                     console.log('the taken means: '+ taken)
                     if(taken){
@@ -46,8 +46,8 @@ userRouter
                         res.status(400).json({
                         error: 'Username already taken. Please try again with a new username'
                         })
-                    }
-                    return UserService.hashPassword(password)
+                    } else {
+                        return UserService.hashPassword(password)
                         .then(hashedPassword => {
                             const hashedUser = {
                                 username,
@@ -60,6 +60,8 @@ userRouter
                                     .json(user)
                                 })
                         })
+                    }
+
                 })
                 .catch(next);
                 
