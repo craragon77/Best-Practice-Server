@@ -113,7 +113,7 @@ userSongsRouter
         if(!user_id){
             res.status(400).json('Please include a user_idin your query');
         } else {
-            UserSongsServices.getAllUserSongsByUserId(knexInstance, user_id)
+            UserSongsServices.getAllUserSongInfoForAUser(knexInstance, user_id)
             .then(songs => {
                 res.status(200).json(songs)
             })
