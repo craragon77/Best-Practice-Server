@@ -111,15 +111,37 @@ userSongsRouter
         const knexInstance = req.app.get('db');
         const user_id = req.params.id;
         if(!user_id){
-            res.status(400).json('Please include a user_idin your query');
+            res.status(400).json('Please include a user_id in your query');
         } else {
             UserSongsServices.getAllUserSongInfoForAUser(knexInstance, user_id)
             .then(songs => {
-                res.status(200).json(songs)
+                if(!songs){
+                    res.status(400).json('Please include a valid user_id in your query')
+                }else{
+                    res.status(200).json(songs)
+                }
             })
             .catch(next)
         }
     })
-
+userSongsRouter
+    .route('/byId/songs/:id')
+    .get(jsonParser, requireAuth, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const user_id = req.params.id;
+        if(!user_id){
+            res.status(400).json('Please include a user_id in your query');
+        } else {
+            UserSongsServices.getAllUserSongsByUserId(knexInstance, user_id)
+            .then(songs => {
+                if(!songs){
+                    res.status(400).json('Please include a valid user_id in your query')
+                }else{
+                    res.status(200).json(songs)
+                }
+            })
+            .catch(next)
+        }
+    })
 
 module.exports = userSongsRouter

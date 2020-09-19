@@ -26,7 +26,7 @@ const SongsService = {
     },
     getAllSongByUserId(knex, user_id){
         return knex.select().from('songs').where('user_id', user_id)
-    }
+    },
     
 }
 

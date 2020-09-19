@@ -91,6 +91,23 @@ songsRouter
                 .catch(next)
         }
     })
-
+songsRouter
+    .route('/ById/:id')
+    .get(requireAuth, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const userId = req.params.id
+        if(!userId || userId < 1 || userId == null){
+            res.status(400).json('Please include a valid user_id as a param')
+        } else {
+            SongsService.getAllSongByUserId(knexInstance, userId)
+                .then(song => {
+                    if(!song){
+                        res.status(400).json('no songs could be found under that id')
+                    } else {
+                        res.status(200).json(song)
+                    }
+                })
+        }
+    })
 
 module.exports = songsRouter;

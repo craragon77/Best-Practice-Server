@@ -26,7 +26,10 @@ const UserSongs = {
     },
     getAllUserSongsByUserId(knex, user_id){
         //gonna need to throw a join or something in this bitch lolol
-        return knex.select().from('user_songs').where('user_id', user_id)
+        return knex.select()
+        .from('user_songs AS us')
+        .join('songs AS s', 's.id', 'us.song_id')
+        .where('user_id', user_id)
     },
     getAllUserSongInfoForAUser(knex, user_id){
         //lolol finish this query later lolol
@@ -34,6 +37,7 @@ const UserSongs = {
         .select()
         .from('user_songs AS us')
         .leftJoin('songs AS s', 's.id', 'us.song_id')
+        .leftJoin('practice_history AS p', 'us.id', 'p.song_practiced')
         .where('user_id', user_id)
     }
 }
