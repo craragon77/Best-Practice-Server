@@ -117,7 +117,7 @@ songsRouter
         const {title, composer} = req.body;
         const title_search = {title};
         const composer_search = {composer}
-        SongsService.getSongByTerm(knexInstance, title_search, composer_search)
+        SongsService.getSongsByTerms(knexInstance, title_search, composer_search)
             .then(songs => {
                 if(!songs){
                     res.status(404).json('unfortunately no songs by that name can be found at this time')
