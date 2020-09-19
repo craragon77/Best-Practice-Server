@@ -27,7 +27,12 @@ const SongsService = {
     getAllSongByUserId(knex, user_id){
         return knex.select().from('songs').where('user_id', user_id)
     },
-    
+    getSongsByTerms(knex, title, composer){
+        return knex.select()
+        .from('songs')
+        .where('title', 'ilike', `%${title}%`)
+        .andWhere('composer', 'ilike', `%${composer}%`)
+    }
 }
 
 module.exports = SongsService;

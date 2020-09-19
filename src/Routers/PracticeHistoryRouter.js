@@ -91,4 +91,16 @@ practiceHistoryRouter
         }
     })
 
+/*practiceHistoryRouter
+    .router('/historyBySongId/:id')
+    .get(requireAuth, jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const song_id = req.params.id;
+        if(song_id === null || song_id <= 0){
+            res.status(400).json('please enter a valid song_id')
+        }else{
+            PracticeHistoryServices
+        }
+    }) */
+
 module.exports = practiceHistoryRouter

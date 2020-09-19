@@ -25,21 +25,35 @@ const UserSongs = {
         .update(newUserSongFields);
     },
     getAllUserSongsByUserId(knex, user_id){
-        //gonna need to throw a join or something in this bitch lolol
+        //this one gets all the songs associated with a user
         return knex.select()
         .from('user_songs AS us')
         .join('songs AS s', 's.id', 'us.song_id')
         .where('user_id', user_id)
     },
-    getAllUserSongInfoForAUser(knex, user_id){
-        //lolol finish this query later lolol
+    getAllUserSongHistoryForAUser(knex, user_id){
+        //this one gets all songs associated with a user + the practice history
         return knex('user_songs')
         .select()
         .from('user_songs AS us')
         .leftJoin('songs AS s', 's.id', 'us.song_id')
         .leftJoin('practice_history AS p', 'us.id', 'p.song_practiced')
         .where('user_id', user_id)
+    },
+    getOnlyPracticeHistory(knex, song_id){
+        return knex('user_songs')
+        .select()
+        .from('user_songs AS us')
+        .leftJoin('practice_history AS p', 'p.song_practiced', 'us.id')
+        .where('song_id', song_id)
+    },
+    getUserSongBySongId(knex, song_id){
+        return knex('user_songs')
+        .select()
+        .from('user_songs AS us')
+        .where('song_id',song_id)
     }
+
 }
 
 module.exports = UserSongs

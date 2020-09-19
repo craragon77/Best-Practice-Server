@@ -106,14 +106,14 @@ userSongsRouter
     })
 
 userSongsRouter
-    .route('/byId/:id')
+    .route('/HistoryById/:id')
     .get(jsonParser, requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db');
         const user_id = req.params.id;
         if(!user_id){
             res.status(400).json('Please include a user_id in your query');
         } else {
-            UserSongsServices.getAllUserSongInfoForAUser(knexInstance, user_id)
+            UserSongsServices.getAllUserSongHistoryForAUser(knexInstance, user_id)
             .then(songs => {
                 if(!songs){
                     res.status(400).json('Please include a valid user_id in your query')
@@ -141,6 +141,44 @@ userSongsRouter
                 }
             })
             .catch(next)
+        }
+    })
+userSongsRouter
+    .route('/songHistory/:id')
+    .get(jsonParser, requireAuth, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const song_id = req.params.id;
+        if(!song_id){
+            res.status(400).json('Please include a song_id in your query');
+        } else {
+            UserSongsServices.getOnlyPracticeHistory(knexInstance, song_id)
+            .then(songs => {
+                if(!songs){
+                    res.status(400).json('Please include a valid song_id in your query')
+                }else{
+                    res.status(200).json(songs)
+                }
+            })
+            .catch(next)
+        }
+    })
+
+userSongsRouter
+    .route('/getInfoBySongId/:id')
+    .get(jsonParser, requireAuth, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const song_id = req.params.id;
+        if(!song_id || song_id <= 0){
+            res.status(400).json('please include a valid song id')
+        }else{
+            UserSongsServices.getUserSongBySongId(knexInstance, song_id)
+            .then(songs => {
+                if(!songs){
+                    res.status(400).json('Please include a valid song_id in your query')
+                }else{
+                    res.status(200).json(songs)
+                }
+            })
         }
     })
 

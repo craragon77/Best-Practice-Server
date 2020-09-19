@@ -110,4 +110,22 @@ songsRouter
         }
     })
 
+songsRouter
+    .route('/byName')
+    .get(requireAuth, jsonParser,(req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const {title, composer} = req.body;
+        const title_search = {title};
+        const composer_search = {composer}
+        SongsService.getSongByTerm(knexInstance, title_search, composer_search)
+            .then(songs => {
+                if(!songs){
+                    res.status(404).json('unfortunately no songs by that name can be found at this time')
+                } else{
+                    res.status(200).json(songs)
+                }
+            })
+            .catch(next)
+    })
+
 module.exports = songsRouter;

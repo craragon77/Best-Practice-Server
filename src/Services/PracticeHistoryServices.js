@@ -23,7 +23,10 @@ const PracticeHistory = {
         return knex('practice_history')
         .where({id})
         .update(new_p_h_Fields);
-    }
+    },
+    /*getAllHistoryBySong(knex, song_id){
+        return knex.select().from('practice_history').where('song_practiced')
+    } */
 }
 
 module.exports = PracticeHistory
