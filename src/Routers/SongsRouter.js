@@ -107,25 +107,25 @@ songsRouter
                         res.status(200).json(song)
                     }
                 })
+                .catch(next)
         }
     })
 
 songsRouter
-    .route('/byName')
+    .route('/byName/:title')
     .get(requireAuth, jsonParser,(req, res, next) => {
         const knexInstance = req.app.get('db');
-        const {title, composer} = req.body;
-        const title_search = {title};
-        const composer_search = {composer}
-        SongsService.getSongsByTerms(knexInstance, title_search, composer_search)
+        const title = req.params.title
+        
+        SongsService.getSongsByTerms(knexInstance, title)
             .then(songs => {
                 if(!songs){
-                    res.status(404).json('unfortunately no songs by that name can be found at this time')
+                    res.status(404).json('unfortunately no songs by that name can be found at this time');
                 } else{
-                    res.status(200).json(songs)
+                    res.status(200).json(songs);
                 }
             })
-            .catch(next)
+            .catch(next);
     })
 
 module.exports = songsRouter;

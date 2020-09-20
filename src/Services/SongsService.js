@@ -27,11 +27,10 @@ const SongsService = {
     getAllSongByUserId(knex, user_id){
         return knex.select().from('songs').where('user_id', user_id)
     },
-    getSongsByTerms(knex, title, composer){
+    getSongsByTerms(knex, title){
         return knex.select()
         .from('songs')
-        .where('title', 'ilike', `%${title}%`)
-        .andWhere('composer', 'ilike', `%${composer}%`)
+        .where('title', 'ilike' ,`%${title}%`)
     }
 }
 
