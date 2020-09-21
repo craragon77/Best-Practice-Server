@@ -1,13 +1,13 @@
 const testPracticeHistory = [
     {
         song_practiced: 1,
-        start_time: '01-01-1970',
-        end_time: '01-01-1970'
+        practice_date: '01-01-1970',
+        practice_hours: 1
     },
     {
         song_practiced: 2,
-        start_time: '01-01-1970',
-        end_time: '01-01-1970'
+        practice_date: '01-01-1970',
+        practice_hours: 1
     }   
 ];
 

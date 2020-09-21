@@ -9,7 +9,7 @@ const testUsers = require('./users.fixtures');
 const testSongs = require('./songs_endpoints.fixtures');
 const jwt = require('jsonwebtoken');
 
-describe('Practice History Endpoint', function(){
+describe.only('Practice History Endpoint', function(){
         let db
         before('make knex instance', () => {
             db = knex ({
@@ -58,8 +58,8 @@ describe('Practice History Endpoint', function(){
     describe('POST /practice-history', () => {
         it(`responds with 400 if a song isnt in the req body`, () => {
             let noSong = {
-                start_time: '01-01-1970',
-                end_time: '01-01-1970'
+                practice_date: '01-01-1970',
+                practice_hours: 1
             };
             return supertest(app)
             .post('/api/practice-history')
@@ -67,10 +67,9 @@ describe('Practice History Endpoint', function(){
             .send(noSong)
             .expect(400);
         });
-        it(`responds with 400 if no start_date in the req body`, () => {
+        it(`responds with 400 if no hours in the req body`, () => {
             let noStart = {
-                song_practiced: 1,
-                end_time: '01-01-1970'
+                song_practiced: 1
             };
             return supertest(app)
             .post('/api/practice-history')
@@ -81,8 +80,8 @@ describe('Practice History Endpoint', function(){
         it(`posts successfully should all the parameters be there`, () => {
             let validPost = {
                 song_practiced: 1,
-                start_time: '01-01-1970',
-                end_time: '01-01-1970'
+                practice_date: '01-01-1970',
+                practice_hours: 1
             }
             return supertest(app)
             .post('/api/practice-history')
@@ -138,8 +137,8 @@ describe('Practice History Endpoint', function(){
         it('returns 400 if a song is not included', () => {
             let missingSong = {
                 id: 1,
-                start_time: '01-01-1970',
-                end_time: '01-01-1970'
+                practice_date: '01-01-1970',
+                practice_hours: 2
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingSong.id}`)
@@ -150,11 +149,11 @@ describe('Practice History Endpoint', function(){
                 expect(res.body).to.eql('Please include a song to update');
             });
         });
-        it('returns 400 if a start date is not included', () => {
+        it('returns 400 if a date is not included', () => {
             let missingStart = {
                 id: 1,
                 song_practiced: 1,
-                end_time: '01-01-1970'
+                practice_hours: 1
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingStart.id}`)
@@ -162,14 +161,14 @@ describe('Practice History Endpoint', function(){
             .send(missingStart)
             .expect(res => {
                 expect(400);
-                expect(res.body).to.eql('Please include a start time to update');
+                expect(res.body).to.eql('Please include a date to update');
             });
         });
-        it('returns 400 if an end date is not included', () => {
+        it('returns 400 if hours is not included', () => {
             let missingEnd = {
                 id: 1,
                 song_practiced: 1,
-                start_time: '01-01-1970'
+                practice_date: '01-01-1970'
             };
             return supertest(app)
             .patch(`/api/practice-history/${missingEnd.id}`)
@@ -178,15 +177,15 @@ describe('Practice History Endpoint', function(){
             .expect(res => {
                 expect(400);
                 console.log(res)
-                expect(res.body).to.eql('Please include an end time to update');
+                expect(res.body).to.eql('Please include hours to update');
             });
         });
         it('returns 204 and a confirmation of a successful update', () => {
             let validUpdate = {
                 id: 1,
                 song_practiced: 1,
-                start_time: '01-01-1970',
-                end_time: '01-01-1970'
+                practice_date: '01-01-1970',
+                practice_hours: 2
             }
             return supertest(app)
             .patch(`/api/practice-history/${validUpdate.id}`)

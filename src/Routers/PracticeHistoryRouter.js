@@ -18,13 +18,13 @@ practiceHistoryRouter
     })
     .post(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db');
-        const {song_practiced, start_time, end_time} = req.body;
-        const newPracticeEntry = {song_practiced, start_time, end_time};
+        const {song_practiced, practice_date, practice_hours} = req.body;
+        const newPracticeEntry = {song_practiced, practice_date, practice_hours};
         if(!song_practiced || song_practiced == null || song_practiced == ''){
             res.status(400).json('Please include the song that you practiced')
-        } else if (!start_time){
+        } else if (!practice_date){
             res.status(400).json('Please include a valid start date')
-        } else if (!end_time){
+        } else if (!practice_hours){
             res.status(400).json('Please include a valid end date')
         }else {
             console.log(newPracticeEntry);
@@ -50,6 +50,7 @@ practiceHistoryRouter
                     res.status(201).json(history);
                 }
             })
+            .catch(next);
     })
     .delete((req, res, next) => {
         const knexInstance = req.app.get('db');
@@ -67,15 +68,15 @@ practiceHistoryRouter
     .patch(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db');
         const p_h_id = req.params.id;
-        const {song_practiced, start_time, end_time} = req.body;
-        let practiceHistoryChanges = {song_practiced, start_time, end_time};
+        const {song_practiced, practice_date, practice_hours} = req.body;
+        let practiceHistoryChanges = {song_practiced, practice_date, practice_hours};
 
         if(!song_practiced || song_practiced == ' '){
             res.status(400).json('Please include a song to update');
-        } else if(!start_time || start_time == ' '){
-            res.status(400).json('Please include a start time to update');
-        } else if (!end_time || end_time == ' '){
-            res.status(400).json('Please include an end time to update');
+        } else if(!practice_date || practice_date == ' '){
+            res.status(400).json('Please include a date to update');
+        } else if (!practice_hours || practice_hours == ' '){
+            res.status(400).json('Please include hours to update');
         } else {
             PracticeHistoryServices.updatePracticeHistory(knexInstance, p_h_id, practiceHistoryChanges)
                 .then(history => {
