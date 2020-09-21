@@ -20,12 +20,10 @@ practiceHistoryRouter
         const knexInstance = req.app.get('db');
         const {song_practiced, practice_date, practice_hours} = req.body;
         const newPracticeEntry = {song_practiced, practice_date, practice_hours};
-        if(!song_practiced || song_practiced == null || song_practiced == ''){
+        if(!song_practiced ||  song_practiced == ''){
             res.status(400).json('Please include the song that you practiced')
-        } else if (!practice_date){
-            res.status(400).json('Please include a valid start date')
         } else if (!practice_hours){
-            res.status(400).json('Please include a valid end date')
+            res.status(400).json('Please include a the number of hours you practiced')
         }else {
             console.log(newPracticeEntry);
             PracticeHistoryServices.postPracticeHistory(knexInstance, newPracticeEntry)
