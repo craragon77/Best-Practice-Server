@@ -52,6 +52,20 @@ const UserSongs = {
         .select()
         .from('user_songs AS us')
         .where('song_id',song_id)
+    },
+    getSongsToLogHours(knex, user_id){
+        //returns all songs associated with a user but formatted for post history queries
+        return knex('user_songs')
+        .select(
+            'us.id',
+            'us.user_id',
+            'us.song_id',
+            's.title',
+            's.composer'
+        )
+        .from('user_songs AS us')
+        .leftJoin('songs AS s', 's.id', 'us.song_id')
+        .where('user_id', user_id)
     }
 
 }

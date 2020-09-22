@@ -3,6 +3,7 @@ const userSongsRouter = express.Router();
 const UserSongsServices = require('../Services/UserSongsServices');
 const jsonParser = express.json();
 const {requireAuth} = require('../middleware/jwt-auth');
+const userRouter = require('./UserRouter');
 //reminder: this one where users can log the songs they are working on!
 userSongsRouter
     .route('/')
@@ -179,7 +180,29 @@ userSongsRouter
                     res.status(200).json(songs)
                 }
             })
+            .catch(next);
         }
     })
+
+userSongsRouter
+    .route('/getSongsForHistoryPost/:id')
+    .get(requireAuth, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const user_id = req.params.id;
+        if(!user_id || user_id <= 0 || user_id === null){
+            res.status(400).json('please include a valid song id')
+        }else{
+            UserSongsServices.getSongsToLogHours(knexInstance, user_id)
+            .then(songs => {
+                if(!songs){
+                    res.status(400).json('Please include a valid song_id in your query')
+                }else{
+                    res.status(200).json(songs)
+                }
+            })
+            .catch(next)
+        }
+    })
+
 
 module.exports = userSongsRouter
