@@ -26,14 +26,14 @@ userSongsRouter
         //if(!user_id ){
             //res.status(400).json('user_id is required');
         if (!song_id){
-            res.status(400).json('song_id is required');
+            res.status(400).json({error: {message: 'song_id is required'}});
         } else if (!difficulty){
-            res.status(400).json('a defined difficulty level is required');
+            res.status(400).json({error: {message:'a defined difficulty level is required'}});
         }
         else if (!instrument){
-            res.status(400).json('a defined instrument is required');
+            res.status(400).json({error: {message: 'a defined instrument is required'}});
         } else if (!desired_hours){
-            res.status(400).json('you must state your desired hours');
+            res.status(400).json({error: {message: 'you must state your desired hours'}});
         } else {
             newUserSongEntry.user_id = req.user.id
             UserSongsServices.postUserSongs(knexInstance, newUserSongEntry)
