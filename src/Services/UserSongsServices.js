@@ -51,7 +51,7 @@ const UserSongs = {
         return knex('user_songs')
         .select()
         .from('user_songs AS us')
-        .where('song_id',song_id)
+        .where('us.song_id',song_id)
     },
     getSongsToLogHours(knex, user_id){
         //returns all songs associated with a user but formatted for post history queries
@@ -66,6 +66,13 @@ const UserSongs = {
         .from('user_songs AS us')
         .leftJoin('songs AS s', 's.id', 'us.song_id')
         .where('user_id', user_id)
+    },
+    getUser_SongIdForDelete(knex, user_id, song_id){
+        return knex('user_songs')
+        .select('us.id')
+        .from('user_songs AS us')
+        .where('user_id',user_id)
+        .andWhere('song_id', song_id)
     }
 
 }
