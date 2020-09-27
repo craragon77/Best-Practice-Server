@@ -21,9 +21,9 @@ songsRouter
     const knexInstance = req.app.get('db');
     const {title, composer} = req.body;
     const newSong = {title, composer};
-    if(!title || title == ''){
+    if(!title || title == ' ' || title == null){
         res.status(400).json('all new songs must include the title of the piece')
-    } else if (!composer || composer == ''){
+    } else if (!composer || composer == ' ' || composer == null){
         res.status(400).json('all new songs must include the composer of the piece')
     }
     else {
@@ -116,7 +116,7 @@ songsRouter
     .get(requireAuth, jsonParser,(req, res, next) => {
         const knexInstance = req.app.get('db');
         const title = req.params.title
-        if(!title || title == null){
+        if(!title || title == null || title == ' '){
             res.status(400).json('please use a valid tearm for your search')
         }
         SongsService.getSongsByTerms(knexInstance, title)
