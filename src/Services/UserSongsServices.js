@@ -48,11 +48,12 @@ const UserSongs = {
         .where('song_id', song_id)
         .andWhere('user_id', user_id)
     },
-    getUserSongBySongId(knex, song_id){
+    getUserSongBySongId(knex, song_id, user_id){
         return knex('user_songs')
         .select()
         .from('user_songs AS us')
         .where('us.song_id',song_id)
+        .andWhere('us.user_id', user_id)
     },
     getSongsToLogHours(knex, user_id){
         //returns all songs associated with a user but formatted for post history queries

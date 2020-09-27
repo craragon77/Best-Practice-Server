@@ -170,10 +170,11 @@ userSongsRouter
     .get(jsonParser, requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db');
         const song_id = req.params.id;
+        const user_id = req.user.id
         if(!song_id || song_id <= 0){
             res.status(400).json('please include a valid song id')
         }else{
-            UserSongsServices.getUserSongBySongId(knexInstance, song_id)
+            UserSongsServices.getUserSongBySongId(knexInstance, song_id, user_id)
             .then(songs => {
                 if(!songs){
                     res.status(400).json('Please include a valid song_id in your query')
