@@ -67,12 +67,8 @@ const UserSongs = {
         .leftJoin('songs AS s', 's.id', 'us.song_id')
         .where('user_id', user_id)
     },
-    getUser_SongIdForDelete(knex, user_id, song_id){
-        return knex('user_songs')
-        .select('us.id')
-        .from('user_songs AS us')
-        .where('user_id',user_id)
-        .andWhere('song_id', song_id)
+    simpleGetUserSongsConfirmation(knex, user_id){
+        return knex.select('song_id', 'user_id').from('user_songs').where('user_id', user_id)
     }
 
 }
