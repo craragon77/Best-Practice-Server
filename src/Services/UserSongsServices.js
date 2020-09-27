@@ -40,12 +40,13 @@ const UserSongs = {
         .leftJoin('practice_history AS p', 'us.id', 'p.song_practiced')
         .where('user_id', user_id)
     },
-    getOnlyPracticeHistory(knex, song_id){
+    getOnlyPracticeHistory(knex, song_id, user_id){
         return knex('user_songs')
         .select()
         .from('user_songs AS us')
         .leftJoin('practice_history AS p', 'p.song_practiced', 'us.id')
         .where('song_id', song_id)
+        .andWhere('user_id', user_id)
     },
     getUserSongBySongId(knex, song_id){
         return knex('user_songs')

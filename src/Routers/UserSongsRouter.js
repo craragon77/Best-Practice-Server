@@ -148,11 +148,12 @@ userSongsRouter
     .route('/songHistory/:id')
     .get(jsonParser, requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db');
-        const song_id = req.params.id;
+        const song_id = req.params.id
+        const user_id = req.user.id
         if(!song_id){
             res.status(400).json('Please include a song_id in your query');
         } else {
-            UserSongsServices.getOnlyPracticeHistory(knexInstance, song_id)
+            UserSongsServices.getOnlyPracticeHistory(knexInstance, song_id, user_id)
             .then(songs => {
                 if(!songs){
                     res.status(400).json('Please include a valid song_id in your query')
