@@ -116,7 +116,9 @@ songsRouter
     .get(requireAuth, jsonParser,(req, res, next) => {
         const knexInstance = req.app.get('db');
         const title = req.params.title
-        
+        if(!title || title == null){
+            res.status(400).json('please use a valid tearm for your search')
+        }
         SongsService.getSongsByTerms(knexInstance, title)
             .then(songs => {
                 if(!songs){
