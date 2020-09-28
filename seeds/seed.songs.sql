@@ -7,7 +7,7 @@ VALUES
     ('Air on the G String', 'J.S. Bach'),
     ('Capricho Arabe', 'Franciso Tárrega'),
     ('La Catedral', 'Agustín Barrios Mangoré'),
-    ('Clair De Lune', 'Claude DebUssy'),
+    ('Clair De Lune', 'Claude Debussy'),
     ('Fantasía X', 'Alfonso de Mudarra'),
     ('Adelita', 'Francisco Tárrega'),
     ('Come Heavy Sleep', 'John Dowland'),

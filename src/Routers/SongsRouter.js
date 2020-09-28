@@ -115,8 +115,8 @@ songsRouter
     .route('/byName/:title')
     .get(requireAuth, jsonParser,(req, res, next) => {
         const knexInstance = req.app.get('db');
-        const title = req.params.title
-        if(!title || title == null || title == ' '){
+        const title = req.params.title.trim()
+        if(!title || title == null || title == " "){
             res.status(400).json('please use a valid tearm for your search')
         }
         SongsService.getSongsByTerms(knexInstance, title)
