@@ -148,11 +148,12 @@ userSongsRouter
     .route('/songHistory/:id')
     .get(jsonParser, requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db');
-        const song_id = req.params.id;
+        const song_id = req.params.id
+        const user_id = req.user.id
         if(!song_id){
             res.status(400).json('Please include a song_id in your query');
         } else {
-            UserSongsServices.getOnlyPracticeHistory(knexInstance, song_id)
+            UserSongsServices.getOnlyPracticeHistory(knexInstance, song_id, user_id)
             .then(songs => {
                 if(!songs){
                     res.status(400).json('Please include a valid song_id in your query')
@@ -169,10 +170,11 @@ userSongsRouter
     .get(jsonParser, requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db');
         const song_id = req.params.id;
+        const user_id = req.user.id
         if(!song_id || song_id <= 0){
             res.status(400).json('please include a valid song id')
         }else{
-            UserSongsServices.getUserSongBySongId(knexInstance, song_id)
+            UserSongsServices.getUserSongBySongId(knexInstance, song_id, user_id)
             .then(songs => {
                 if(!songs){
                     res.status(400).json('Please include a valid song_id in your query')
@@ -196,6 +198,26 @@ userSongsRouter
             .then(songs => {
                 if(!songs){
                     res.status(400).json('Please include a valid song_id in your query')
+                }else{
+                    res.status(200).json(songs)
+                }
+            })
+            .catch(next)
+        }
+    })
+
+    userSongsRouter
+    .route('/confirmation/:id')
+    .get(jsonParser, requireAuth, (req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const user_id = req.params.id;
+        if(!user_id){
+            res.status(400).json('Please include a user_id in your query');
+        } else {
+            UserSongsServices.simpleGetUserSongsConfirmation(knexInstance, user_id)
+            .then(songs => {
+                if(!songs){
+                    res.status(400).json('Please include a valid user_id in your query')
                 }else{
                     res.status(200).json(songs)
                 }
