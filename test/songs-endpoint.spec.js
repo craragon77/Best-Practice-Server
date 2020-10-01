@@ -21,7 +21,6 @@ describe('Songs Endpoint', function(){
             app.set('db', db);
         });
         after('disconnect from db', () => db.destroy());
-        //computer gets mad when I have a table here
         before('clean the table', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
         afterEach('clean tables again', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
 

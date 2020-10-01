@@ -57,7 +57,6 @@ describe('Auth Endpoints', function(){
             .send(loginAttempt)
             .expect(res => {
                 expect(400)
-                //the error message doesn't match? why
                 expect(res.error.message).to.eql(`Missing password in request body`)
             })
         });

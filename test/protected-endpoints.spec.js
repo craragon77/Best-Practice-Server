@@ -37,11 +37,6 @@ describe('Protected Endpoints', () => {
         return supertest(app)
         .get('/api/users')
         .expect(401)
-        /*.expect(res => {
-            expect(401);
-            //same issue here?
-            expect(res.error).to.eql(`Missing Bearer Token`)
-        }) */
         
     });
     it(`returns a 401 if the token isn't valid`, () => {

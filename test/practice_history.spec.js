@@ -17,14 +17,9 @@ describe.only('Practice History Endpoint', function(){
                 connection: config.TEST_DATABASE_URL
             });
             app.set('db', db);
-            //console.log('db', db)
         });
         after('disconnect from db', () => db.destroy());
-        //error comes from here
         before('clean the table', () => db.raw('Truncate practice_history, user_songs, songs, users RESTART identity cascade'));
-        //^^^^^^^^^
-        //console.log(config.TEST_DATABASE_URL)
-        //context('Given users have logged hours into the database', () => {
         beforeEach('insert test users', () => {
             return db.into('users').insert(testUsers);
         })
@@ -176,7 +171,6 @@ describe.only('Practice History Endpoint', function(){
             .send(missingEnd)
             .expect(res => {
                 expect(400);
-                console.log(res)
                 expect(res.body).to.eql('Please include hours to update');
             });
         });

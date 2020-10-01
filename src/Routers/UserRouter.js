@@ -12,9 +12,7 @@ userRouter
     .get(requireAuth, (req, res, next) => {
         const knexInstance = req.app.get('db')
         UserService.getAllUsers(knexInstance)
-        //and there is an issue here for some reason :(
             .then(users => {
-                console.log(req.get('Authorization'))
                 res.json(users)
             })
             .catch(next)
@@ -23,7 +21,6 @@ userRouter
         const knexInstance = req.app.get('db');
         const {username, password} = req.body;
         const newUser = {username, password};
-        console.log(newUser)
         if(!username){
             res.status(400).json('Username not included in request body; please enter a valid username');
         } else if(username.length < 6 || username.length > 20){
@@ -40,9 +37,7 @@ userRouter
         else{
             UserService.hasUserWithUserName(knexInstance, newUser.username)
                 .then(taken => {
-                    console.log('the taken means: '+ taken)
                     if(taken){
-                        //taken is currently a truthy??? why?
                         res.status(400).json({
                         error: 'Username already taken. Please try again with a new username'
                         })
@@ -95,7 +90,6 @@ userRouter
                         error: {message: `Unable to delete user; user not found`}
                     })
                 } else {
-                    //look into why the message doesn't send if the 
                     res.json('User successfully deleted').status(204).end()
                 };
             })

@@ -21,17 +21,11 @@ app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
 
-/*const knexInstance = knex({
-    client: 'pg',
-    connection: config.DATABASE_URL
-}); */
 
 
 app.get('/', (req,res) => {
     res.send('Hello, Dave')
 })
-
-//app.set('db', knexInstance)
 
 app.use('/api/users', userRouter);
 app.use('/api/songs', songsRouter);

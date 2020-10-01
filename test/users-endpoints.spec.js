@@ -41,8 +41,6 @@ describe.only('User Endpoints', function(){
     
     describe('GET /users endoint', () => {
         it('GET /users responds with 200 and all of the users', () => {
-        console.log(testUsers[0])
-        console.log(makeAuthHeader(testUsers[0]))
         return supertest(app)
         .get('/api/users')
         .set('Authorization', makeAuthHeader(testUsers[0]))
@@ -56,7 +54,6 @@ describe.only('User Endpoints', function(){
             }
             return supertest(app)
             .post('/api/users')
-            //.set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noUsername)
             .expect(400)
 
@@ -67,7 +64,6 @@ describe.only('User Endpoints', function(){
             }
             return supertest(app)
             .post('/api/users')
-            //.set('Authorization', makeAuthHeader(testUsers[0]))
             .send(noPassword)
             .expect(400)
         });
@@ -78,7 +74,6 @@ describe.only('User Endpoints', function(){
             };
             return supertest(app)
             .post('/api/users')
-            //.set('Authorization', makeAuthHeader(testUsers[0]))
             .send(newValidUser)
             .expect(res => {
                 expect(201)
@@ -171,7 +166,6 @@ describe.only('User Endpoints', function(){
             .set('Authorization', makeAuthHeader(testUsers[0]))
             .expect(res => {
                 expect(201)
-                //console.log(res)
                 expect(res.body.id).to.eql(validId)
             })
         })

@@ -17,7 +17,6 @@ songsRouter
         .catch(next)
 })
 .post(jsonParser, (req, res, next) => {
-    //come back to this because I have a few ideas of how we can improve this with an API
     const knexInstance = req.app.get('db');
     const {title, composer} = req.body;
     const newSong = {title, composer};

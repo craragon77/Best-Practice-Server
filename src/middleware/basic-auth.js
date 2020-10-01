@@ -5,7 +5,6 @@ function requireAuth(req, res, next){
     const authToken = req.get('Authorization') || ''
 
     let basicToken
-    //thx for catching this Silveri!
     if(!authToken.toLowerCase().startsWith('basic ')){
         return res.status(401).json({
             error: 'Missing basic token'
@@ -32,16 +31,13 @@ function requireAuth(req, res, next){
                     error: 'Unauthorized request; User not found'
                 });
             }
-            //why doesn't this want to work with me :(
             return AuthService.comparePasswords(tokenPassword, user.password)
                 .then(passwordsMatch => {
                     if(tokenPassword !== user.password){
-                        console.log('the password match here = ' + passwordsMatch)
                         return res.status(401).json({
                             error: 'Unauthorized request; Invalid Password'
                         })
                     }
-                    console.log('the password match here = ' + passwordsMatch)
                     req.user = user
                     next()
                 })

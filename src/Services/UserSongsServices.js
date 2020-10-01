@@ -25,14 +25,12 @@ const UserSongs = {
         .update(newUserSongFields);
     },
     getAllUserSongsByUserId(knex, user_id){
-        //this one gets all the songs associated with a user
         return knex.select()
         .from('user_songs AS us')
         .join('songs AS s', 's.id', 'us.song_id')
         .where('user_id', user_id)
     },
     getAllUserSongHistoryForAUser(knex, user_id){
-        //this one gets all songs associated with a user + the practice history
         return knex('user_songs')
         .select()
         .from('user_songs AS us')
@@ -56,7 +54,6 @@ const UserSongs = {
         .andWhere('us.user_id', user_id)
     },
     getSongsToLogHours(knex, user_id){
-        //returns all songs associated with a user but formatted for post history queries
         return knex('user_songs')
         .select(
             'us.id',

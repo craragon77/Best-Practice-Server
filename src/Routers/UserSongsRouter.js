@@ -4,16 +4,14 @@ const UserSongsServices = require('../Services/UserSongsServices');
 const jsonParser = express.json();
 const {requireAuth} = require('../middleware/jwt-auth');
 const userRouter = require('./UserRouter');
-//reminder: this one where users can log the songs they are working on!
+
 userSongsRouter
     .route('/')
     .all(requireAuth)
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         UserSongsServices.getAllUserSongs(knexInstance)
-        //apparently according to the testing file there is an issue here somewhere
             .then(userSongs => {
-                console.log(userSongs)
                 res.json(userSongs)
             })
             .catch(next);
@@ -23,8 +21,7 @@ userSongsRouter
         const {song_id, difficulty, instrument, desired_hours, comments} = req.body;
         const newUserSongEntry = {song_id, difficulty, instrument, desired_hours, comments};
         
-        //if(!user_id ){
-            //res.status(400).json('user_id is required');
+        
         if (!song_id){
             res.status(400).json({error: {message: 'song_id is required'}});
         } else if (!difficulty){
@@ -38,7 +35,6 @@ userSongsRouter
             newUserSongEntry.user_id = req.user.id
             UserSongsServices.postUserSongs(knexInstance, newUserSongEntry)
                 .then(user_song => {
-                    console.log(user_song)
                     res.status(201).json(user_song)
                 })
                 .catch(next)

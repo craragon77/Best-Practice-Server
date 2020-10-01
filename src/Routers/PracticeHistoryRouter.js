@@ -25,7 +25,6 @@ practiceHistoryRouter
         } else if (!practice_hours){
             res.status(400).json('Please include a the number of hours you practiced')
         }else {
-            console.log(newPracticeEntry);
             PracticeHistoryServices.postPracticeHistory(knexInstance, newPracticeEntry)
                 .then(practice => {
                     res.status(201).json(practice);
@@ -78,28 +77,14 @@ practiceHistoryRouter
         } else {
             PracticeHistoryServices.updatePracticeHistory(knexInstance, p_h_id, practiceHistoryChanges)
                 .then(history => {
-                    console.log(history)
                     if(!history){
                         res.status(404).json('practice history not found');
                     } else {
-                        //why is it that the message only sends if .json() is sent after the status
                         res.json('practice history updated successfully!').status(204);
                     }
                 })
                 .catch(next)
         }
     })
-
-/*practiceHistoryRouter
-    .router('/historyBySongId/:id')
-    .get(requireAuth, jsonParser, (req, res, next) => {
-        const knexInstance = req.app.get('db');
-        const song_id = req.params.id;
-        if(song_id === null || song_id <= 0){
-            res.status(400).json('please enter a valid song_id')
-        }else{
-            PracticeHistoryServices
-        }
-    }) */
 
 module.exports = practiceHistoryRouter

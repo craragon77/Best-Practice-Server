@@ -25,8 +25,6 @@ authRouter
                     });
                 return AuthService.comparePasswords(loginUser.password, dbUser.password)
                     .then(compareMatch => {
-                        //why is it that loginUser.password !== dbUser.password works but !compareMatch doesn't?
-                        console.log(dbUser.password, compareMatch)
                         if(!compareMatch){
                             return res.status(400).json({
                                 error: 'Incorrect password'

@@ -18,7 +18,6 @@ describe('User-Songs endpoint!', function(){
             app.set('db', db)
         });
         ;
-        console.log(testUserPieces)
         after('disconnect from db', () => db.destroy());
         before(`clean the table`, () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`))
         
@@ -27,20 +26,12 @@ describe('User-Songs endpoint!', function(){
             return db.into('users').insert(testUsers)
         });
         beforeEach('insert test user pieces', () => {
-            console.log('echo 3')
-            //doesn't insert because of foreign key constraints
             return db.into('songs').insert(testSongs)
         });
         beforeEach('insert test user pieces', () => {
-            console.log('echo 1')
-            //doesn't insert because of foreign key constraints
             return db.into('user_songs').insert(testUserPieces)
         });
-        //});
-        //after('truncate all tables', () => db('users').truncate());
-        //after('truncate all tables', () => db('songs').truncate());
-        console.log('the db is: ' + db)
-        //afterEach('truncate all tables', () => db('practice_history','user_songs', 'songs', 'users').truncate());
+        
         afterEach('truncate all tables', () => db.raw(`Truncate practice_history, user_songs, users, songs RESTART identity cascade`));
 
         function makeAuthHeader(user, secret = process.env.JWT_SECRET){
@@ -60,20 +51,6 @@ describe('User-Songs endpoint!', function(){
         });
     });
     describe('POST /user-songs', () => {
-        /*it(`sends a 400 and an error if there is no user_id`, () => {
-            const noUserId = {
-                song_id: 1,
-                difficulty: 'hard',
-                instrument: 'guitar',
-                desired_hours: 1
-            };
-            return supertest(app)
-            .post('/api/user-songs')
-            .set('Authorization', makeAuthHeader(testUsers[0]))
-            .send(noUserId)
-            .expect(400);
-        }); */
-        //^^^^not sure if I need to cut this one given the web tokens
         it(`sends a 400 and an error if there is no song`, () => {
             const noSongId = {
                 difficulty: 'hard',
@@ -124,7 +101,6 @@ describe('User-Songs endpoint!', function(){
         });
         it('posts a valid user piece if all the requirements are met', () => {
             const validUserSong = {
-                //doesn't work when the id is 1 but DOES work when the id is 13?
                 song_id: 1,
                 difficulty: 'hard',
                 instrument: 'guitar',
