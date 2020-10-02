@@ -11,6 +11,6 @@ To use Best Practice's server, simply make an account with a valid username and 
 
 The backend for the program was built with Node.js, Mocha, Chai, and PostgreSQL. To deploy, simply clone the code and type "npm start" or "npm run dev" into the command line. To view the client repository, it is available here: https://github.com/craragon77/Best-Practice-Client
 
-![snapshot small screen](https://github.com/craragon77/Best-Practice-Client/blob/master/src/readme-pics/screenshot3.png)
+![snapshot small screen](https://github.com/craragon77/Best-Practice-Client/blob/master/src/readme-pics/screenshot4.png)
 
 This program is dedicated to all musicians and artists who spend their free time devoted to improving their craft. Special thanks to my advisor Jaina Morgan for her support.
